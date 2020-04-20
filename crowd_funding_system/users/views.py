@@ -1,8 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.edit import UpdateView, DeleteView
-from users.models import User
+from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from .forms import UserModelForm
+from django.shortcuts import render
+from users.models import User
+from .models import User
+from projects.models import Project
+
 
 class ProfileUpdate(UpdateView):
     form_class= UserModelForm    
@@ -35,3 +40,17 @@ class UserDelete(DeleteView):
 def test_home(request):
     return render(request,"home.html")
 
+
+
+# Create your views here.
+def show(request, id):
+    user = User.objects.filter(id=id)[0]
+    context = {"user": user}
+    return render(request, "users/show.html", context)
+
+def show_projects(request, id):
+    user = User.objects.filter(id=id)[0]
+    user_projects = user.project_set.all()
+    context = {"user": user, "user_projects": user_projects}
+    # return HttpResponse(f"{user_projects}")
+    return render(request, "users/show_projects.html", context)

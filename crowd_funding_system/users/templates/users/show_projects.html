@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{user.first_name}}'s Projects</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container" style="margin-top: 5rem;">
+        <h2>My Projects</h2>
+        {% for project in user_projects %}
+    
+            <div class="card mt-2" style="width: 25rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{project.title}}</h5>
+                    <p class="card-text">Total Target: {{project.total_target}}</p>
+                    <p class="card-text">Category: {{project.category.category_name}}</p>
+                    <!-- <p class="card-text">{{project.details}}</p> -->
+                    <!-- The Link Should be Modified to Go to Show Project -->
+                    <a href="#" class="btn btn-primary">View More</a>
+                </div>
+            </div>
+    
+        {% empty %}
+            <div class="card" style="width: 25rem; margin-top: 10rem; margin-left: 20rem;">
+                <div class="card-body">
+                    <h5 class="card-title ml-4 mt-2">You don't have any Projects, Yet.</h5>
+                    <!-- The Link Should be Modified to Go to Create Project -->
+                    <a href="#" class="btn btn-primary mt-2" style="margin-left: 7rem;">Create One</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
