@@ -1,0 +1,52 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}
+{{user.first_name}}'s Profile
+{% endblock %}
+
+{% block extra_style %}
+<link rel="stylesheet" href="{% static 'users/show_profile.css' %}" type="text/css">
+{% endblock %}
+{% block my_content %}
+
+<div class="left-container">
+    <div class="img-container">
+        <img src="{% if user.profile_pic != '' %} {{user.profile_pic.url}} {% endif %}"
+            alt="{{user.first_name}}'s Profile Pic">
+    </div>
+    <h2>{{user.first_name}} {{user.last_name}}</h2>
+</div>
+<div class="main-container">
+
+    <div class="info-container">
+        <h4>Email: {{user.email}}</h4>
+
+        <h4>Phone:
+            {% if user.phone != "" %}
+            {{user.phone}}
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
+
+        <h4>Birthdate:
+            {% if user.birthdate != nill %}
+            {{user.birthdate}}
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
+
+        <h4>Facebook Profile:
+            {% if user.fb_link != nill %}
+            <a href="{{user.fb_link}}">{{user.fb_link}}</a>
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
+    </div>
+
+</div>
+
+{% endblock%}

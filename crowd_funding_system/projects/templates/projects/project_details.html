@@ -5,12 +5,12 @@
     {% comment %} <img src="./media/{{projects.image}}" hight="200px" width="200px" class="card-img-top" alt={{projects.name}}> {% endcomment %}
         <div class="card-body">
             <h5 class="card-title">{{project.title}}</h5>
-            <p class="card-text">Created By: {{ project.creator_id.first_name }} {{ project.creator_id.last_name }} </p>
+            <p class="card-text">Created By: {{ project.creator.first_name }} {{ project.creator.last_name }} </p>
             <p class="card-text">Details: {{ project.details }}</p>
             <p class="card-text">Total Target: {{ project.total_target }}</p>
             <p class="card-text">Start Date: {{ project.start_date }}</p>
             <p class="card-text">End Date: {{ project.end_date }}</p>
-            <p class="card-text">Category: {{ project.category_id.category_name }}</p>
+            <p class="card-text">Category: {{ project.category.category_name }}</p>
             <p class="card-text">Avg. Rating: {{ project.average_rating }}</p>
             <a href="{% url 'index'%}" class="btn btn-primary">Back to all projects</a>
         </div>
@@ -26,12 +26,12 @@
                 <div class="card-body">
                     <a href="{% url 'project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
                     
-                    <p class="card-text">Created By: {{ project.creator_id.first_name }} {{ project.creator_id.last_name }} </p>
+                    <p class="card-text">Created By: {{ project.creator.first_name }} {{ project.creator.last_name }} </p>
                     <p class="card-text">Details: {{ project.details }}</p>
                     <p class="card-text">Total Target: {{ project.total_target }}</p>
                     <p class="card-text">Start Date: {{ project.start_date }}</p>
                     <p class="card-text">End Date: {{ project.end_date }}</p>
-                    <p class="card-text">Category: {{ project.category_id.category_name }}</p>
+                    <p class="card-text">Category: {{ project.category.category_name }}</p>
                     <p class="card-text">Avg. Rating: {{ project.average_rating }}</p>
                 </div>
             </div>
