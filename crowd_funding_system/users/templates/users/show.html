@@ -1,95 +1,52 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'users/base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{user.first_name}}'s Profile</title>
-    <style>
-        body {
-            display: flex;
-            height: 97vh;
-            flex-direction: row;
-        }
+{% block title %}
+{{user.first_name}}'s Profile
+{% endblock %}
 
-        .left-container {
-            width: 20%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-        }
+{% block extra_style %}
+<link rel="stylesheet" href="{% static 'users/show_profile.css' %}" type="text/css">
+{% endblock %}
+{% block my_content %}
 
-        .main-container {
-            width: 80%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .img-container {
-            background: #C39797;
-            height: 260px;
-            width: 260px;
-            margin-top: 5rem;
-            overflow: hidden;
-        }
-        .img-container img {
-            width: 260px;
-            height: 260px;
-        }
-        .info-container {
-            margin-top: 5rem;
-            margin-left: 5rem;
-            height: 260px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="left-container">
-        <div class="img-container">
-            <img src="{% if user.profile_pic != '' %} {{user.profile_pic.url}} {% endif %}" alt="{{user.first_name}}'s Profile Pic">
-        </div>
-        <h2>{{user.first_name}} {{user.last_name}}</h2>
+<div class="left-container">
+    <div class="img-container">
+        <img src="{% if user.profile_pic != '' %} {{user.profile_pic.url}} {% endif %}"
+            alt="{{user.first_name}}'s Profile Pic">
     </div>
-    <div class="main-container">
+    <h2>{{user.first_name}} {{user.last_name}}</h2>
+</div>
+<div class="main-container">
 
-        <div class="info-container">
-            <h2>Email: {{user.email}}</h2>
-    
-            <h2>Phone: 
-                {% if user.phone != "" %}
-                    {{user.phone}}
-                {% else %}
-                    Not Provided
-                {% endif %}
-            </h2>
-            
-            <h2>Birthdate: 
-                {% if user.birthdate != nill %}
-                    {{user.birthdate}}
-                {% else %}
-                    Not Provided
-                {% endif %}
-            </h2>
-    
-            <h2>Facebook Profile: 
-                {% if user.fb_link != nill %}
-                    <a href="{{user.fb_link}}">{{user.fb_link}}</a>
-                {% else %}
-                    Not Provided
-                {% endif %}
-            </h2>
-        </div>
+    <div class="info-container">
+        <h4>Email: {{user.email}}</h4>
 
+        <h4>Phone:
+            {% if user.phone != "" %}
+            {{user.phone}}
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
+
+        <h4>Birthdate:
+            {% if user.birthdate != nill %}
+            {{user.birthdate}}
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
+
+        <h4>Facebook Profile:
+            {% if user.fb_link != nill %}
+            <a href="{{user.fb_link}}">{{user.fb_link}}</a>
+            {% else %}
+            Not Provided
+            {% endif %}
+        </h4>
     </div>
-</body>
 
-</html>
+</div>
+
+{% endblock%}

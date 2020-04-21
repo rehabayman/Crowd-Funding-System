@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.db.models import Sum
 
 # Create your models here.
 class Project(models.Model):
@@ -13,6 +14,10 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     creator = models.ForeignKey("users.User", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
+        
+    def get_donations_of_project(self):
+        total_donations = self.user_donations_set.aggregate(Sum('amount'))
+        return total_donations["amount__sum"]
 
 
 class Category(models.Model):
@@ -43,6 +48,7 @@ class User_Donations(models.Model):
     amount = models.DecimalField(null=False, blank=False, max_digits=9, decimal_places=2)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Project_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
