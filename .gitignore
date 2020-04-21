@@ -1,2 +1,7 @@
 .vscode/
 develop-env/
+*.log
+*.pot
+*.pyc
+__pycache__
+media

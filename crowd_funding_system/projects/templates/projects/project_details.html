@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<div class='container'>
+    <div class="card mx-auto border border-info rounded bg-light" style="width: 70rem;margin-top: 50px;">
+    {% comment %} <img src="./media/{{projects.image}}" hight="200px" width="200px" class="card-img-top" alt={{projects.name}}> {% endcomment %}
+        <div class="card-body">
+            <h5 class="card-title">{{project.title}}</h5>
+            <p class="card-text">Created By: {{ project.creator_id.first_name }} {{ project.creator_id.last_name }} </p>
+            <p class="card-text">Details: {{ project.details }}</p>
+            <p class="card-text">Total Target: {{ project.total_target }}</p>
+            <p class="card-text">Start Date: {{ project.start_date }}</p>
+            <p class="card-text">End Date: {{ project.end_date }}</p>
+            <p class="card-text">Category: {{ project.category_id.category_name }}</p>
+            <p class="card-text">Avg. Rating: {{ project.average_rating }}</p>
+            <a href="{% url 'index'%}" class="btn btn-primary">Back to all projects</a>
+        </div>
+    </div>
+</div>
+
+{% if similar_projects%}
+<div class='container'>
+<h2 class='mt-5'>Similar Projects:</h2>
+    {% for project in similar_projects %}
+            <div class="card mx-auto border border-info rounded bg-light" style="width: 70rem;margin-top: 50px;">
+            {% comment %} <img src="./media/{{projects.image}}" hight="200px" width="200px" class="card-img-top" alt={{projects.name}}> {% endcomment %}
+                <div class="card-body">
+                    <a href="{% url 'project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
+                    
+                    <p class="card-text">Created By: {{ project.creator_id.first_name }} {{ project.creator_id.last_name }} </p>
+                    <p class="card-text">Details: {{ project.details }}</p>
+                    <p class="card-text">Total Target: {{ project.total_target }}</p>
+                    <p class="card-text">Start Date: {{ project.start_date }}</p>
+                    <p class="card-text">End Date: {{ project.end_date }}</p>
+                    <p class="card-text">Category: {{ project.category_id.category_name }}</p>
+                    <p class="card-text">Avg. Rating: {{ project.average_rating }}</p>
+                </div>
+            </div>
+        {% empty%}
+        No project found
+        {% endfor %}
+</div>
+{% endif %}
