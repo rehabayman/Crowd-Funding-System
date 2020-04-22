@@ -2,7 +2,7 @@ from django.db import models
 from users.models import User
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
-from django.db.models import Sum
+from django.db.models import Avg, Sum
 
 # Create your models here.
 class Project(models.Model):
@@ -14,6 +14,15 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     creator = models.ForeignKey("users.User", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    
+    @property
+    def average_rating(self):
+        rating = Project_Ratings.objects.filter(project_id = self.id).aggregate(Avg('rating'))
+        return rating['rating__avg']
+    
+    @property
+    def images(self):
+        return Project_Pictures.objects.filter(project_id = self.id)
         
     def get_donations_of_project(self):
         total_donations = self.user_donations_set.aggregate(Sum('amount'))
