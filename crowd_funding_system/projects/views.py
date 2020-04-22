@@ -98,12 +98,12 @@ class ProjectDelete(LoginRequiredMixin,DeleteView):
 
 # Create your views here.
 
-@login_required
+# @login_required
 def index(request):
     projects = {"projects": Project.objects.all()}
     return render(request,"projects/index.html",projects)
 
-@login_required
+# @login_required
 def project_details(request,project_id):
     target_project = Project.objects.get(id=project_id)
     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
