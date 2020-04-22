@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from django.urls import reverse
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
@@ -14,6 +15,8 @@ class Project(models.Model):
     creator = models.ForeignKey("users.User", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.title
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,7 +46,9 @@ class User_Donations(models.Model):
     amount = models.DecimalField(null=False, blank=False, max_digits=9, decimal_places=2)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-
+    # to test reverse.  it will be reversed to the user's profile page
+    def get_absolute_url(self):
+        return reverse("users:home")
 class Project_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     report = models.TextField(max_length=500, null=False, blank=False)
