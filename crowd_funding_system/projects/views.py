@@ -14,6 +14,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .forms import new_project_form
 from django.contrib.auth.decorators import login_required
+from .filters import ProjectFilter
+
+
 
 def get_total_donations(id):
     if User_Donations.objects.filter(project_id=id).aggregate(total=Sum('amount'))['total']:
@@ -100,7 +103,10 @@ class ProjectDelete(LoginRequiredMixin,DeleteView):
 
 # @login_required
 def index(request):
-    projects = {"projects": Project.objects.all()}
+    projects= Project.objects.all()
+    myFilter = ProjectFilter(request.GET, queryset=projects)
+    projects= myFilter.qs
+    projects = {"projects": projects, "myFilter":myFilter}
     return render(request,"projects/index.html",projects)
 
 # @login_required
@@ -109,7 +115,7 @@ def project_details(request,project_id):
     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
     project = {"project": target_project,"similar_projects": similar_projects}
     return render(request,"projects/project_details.html",project)
-
+# @login_required
 def new_project(request):
     form = new_project_form(request.POST or None)
     if form.is_valid():

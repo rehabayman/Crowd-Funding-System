@@ -44,7 +44,7 @@
 <h2 class='mt-5'>Similar Projects:</h2>
     {% for project in similar_projects %}
         <div class="mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
-            <a href="{% url 'project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
+            <a href="{% url 'projects:project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {% for project_image in project.images %}
