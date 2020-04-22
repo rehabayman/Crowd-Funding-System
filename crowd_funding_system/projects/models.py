@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from django.urls import reverse
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.db.models import Avg, Sum
@@ -28,6 +29,8 @@ class Project(models.Model):
         total_donations = self.user_donations_set.aggregate(Sum('amount'))
         return total_donations["amount__sum"]
 
+    def __str__(self):
+        return self.title
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -58,6 +61,9 @@ class User_Donations(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    # to test reverse.  it will be reversed to the user's profile page
+    def get_absolute_url(self):
+        return reverse("users:home")
 
 class Project_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -1,0 +1,12 @@
+{{error}}  
+
+{{message}}
+
+<P>Total donations is: {{total}}</P>
+
+{% if not Done %}
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}    
+    <input type="submit" value="donate">
+</form>
+{% endif %}
