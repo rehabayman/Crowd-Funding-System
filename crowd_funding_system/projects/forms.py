@@ -1,4 +1,5 @@
 from django import forms
+<<<<<<< HEAD
 from .models import User_Donations, Project
 import decimal
 
@@ -14,3 +15,20 @@ class UserDonationsModelForm(forms.ModelForm):
             raise forms.ValidationError("Amount is invalid")
         return amount
     
+=======
+
+from .models import Project
+
+class new_project_form(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = [
+            'title',
+            'details',
+            'total_target',
+            'start_date',
+            'end_date',
+            'creator',
+            'category'
+        ]
+>>>>>>> cde52a4aa436c8b10be9deaa5f3548f5d5435ea0

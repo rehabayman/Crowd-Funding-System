@@ -6,9 +6,10 @@ from .forms import UserModelForm
 from django.shortcuts import render,redirect
 from users.models import User
 from .models import User
-from projects.models import Project
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
+from projects.models import Project, User_Donations
+from django.contrib.auth.decorators import login_required
 
 
 class ProfileUpdate(LoginRequiredMixin,UpdateView):
@@ -80,16 +81,23 @@ def test_home(request):
     return render(request,"home.html")
 
 
-
-# Create your views here.
+@login_required
 def show(request, id):
     user = User.objects.filter(id=id)[0]
     context = {"user": user}
     return render(request, "users/show.html", context)
 
+@login_required
 def show_projects(request, id):
     user = User.objects.filter(id=id)[0]
     user_projects = user.project_set.all()
     context = {"user": user, "user_projects": user_projects}
-    # return HttpResponse(f"{user_projects}")
     return render(request, "users/show_projects.html", context)
+
+@login_required
+def show_donations(request, id):
+    user = User.objects.filter(id=id)[0]
+    user_donations = user.user_donations_set.all()
+    # all_donations = User_Donations.objects.filter(project=)
+    context = {"user": user, "user_donations": user_donations}
+    return render(request, "users/show_donations.html", context)

@@ -3,9 +3,7 @@ from django.views.generic.edit import CreateView, DeleteView
 from django.http import HttpResponse,HttpResponseRedirect, Http404
 from django.urls import reverse_lazy, reverse
 from .forms import UserDonationsModelForm
-from django.shortcuts import render
-from .models import User_Donations
-from .models import User
+from .models import User_Donations, User 
 from projects.models import Project
 from django.core.validators import ValidationError
 from django.db.models import Sum 
@@ -13,6 +11,10 @@ import decimal
 from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import *
+from .forms import new_project_form
+from django.contrib.auth.decorators import login_required
+
 def get_total_donations(id):
     if User_Donations.objects.filter(project_id=id).aggregate(total=Sum('amount'))['total']:
         total = decimal.Decimal(User_Donations.objects.filter(project_id=id).aggregate(total=Sum('amount'))['total'])
@@ -93,3 +95,27 @@ class ProjectDelete(LoginRequiredMixin,DeleteView):
         else:            
             raise PermissionDenied()
     success_url = '/' 
+
+# Create your views here.
+
+@login_required
+def index(request):
+    projects = {"projects": Project.objects.all()}
+    return render(request,"projects/index.html",projects)
+
+@login_required
+def project_details(request,project_id):
+    target_project = Project.objects.get(id=project_id)
+    similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+    project = {"project": target_project,"similar_projects": similar_projects}
+    return render(request,"projects/project_details.html",project)
+
+def new_project(request):
+    form = new_project_form(request.POST or None)
+    if form.is_valid():
+        form.save()
+    
+    context = {
+        'form' : form
+    }
+    return render (request, "projects/new_project.html", context)

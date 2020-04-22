@@ -3,6 +3,7 @@ from users.models import User
 from django.urls import reverse
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.db.models import Avg, Sum
 
 # Create your models here.
 class Project(models.Model):
@@ -14,6 +15,19 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     creator = models.ForeignKey("users.User", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    
+    @property
+    def average_rating(self):
+        rating = Project_Ratings.objects.filter(project_id = self.id).aggregate(Avg('rating'))
+        return rating['rating__avg']
+    
+    @property
+    def images(self):
+        return Project_Pictures.objects.filter(project_id = self.id)
+        
+    def get_donations_of_project(self):
+        total_donations = self.user_donations_set.aggregate(Sum('amount'))
+        return total_donations["amount__sum"]
 
     def __str__(self):
         return self.title
@@ -46,9 +60,14 @@ class User_Donations(models.Model):
     amount = models.DecimalField(null=False, blank=False, max_digits=9, decimal_places=2)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+<<<<<<< HEAD
     # to test reverse.  it will be reversed to the user's profile page
     def get_absolute_url(self):
         return reverse("users:home")
+=======
+    created_at = models.DateTimeField(auto_now_add=True)
+
+>>>>>>> cde52a4aa436c8b10be9deaa5f3548f5d5435ea0
 class Project_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     report = models.TextField(max_length=500, null=False, blank=False)
