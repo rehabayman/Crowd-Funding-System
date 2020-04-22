@@ -60,14 +60,11 @@ class User_Donations(models.Model):
     amount = models.DecimalField(null=False, blank=False, max_digits=9, decimal_places=2)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-<<<<<<< HEAD
+    created_at = models.DateTimeField(auto_now_add=True)
     # to test reverse.  it will be reversed to the user's profile page
     def get_absolute_url(self):
         return reverse("users:home")
-=======
-    created_at = models.DateTimeField(auto_now_add=True)
 
->>>>>>> cde52a4aa436c8b10be9deaa5f3548f5d5435ea0
 class Project_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     report = models.TextField(max_length=500, null=False, blank=False)
