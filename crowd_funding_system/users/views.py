@@ -59,6 +59,5 @@ def show_projects(request, id):
 def show_donations(request, id):
     user = User.objects.filter(id=id)[0]
     user_donations = user.user_donations_set.all()
-    # all_donations = User_Donations.objects.filter(project=)
     context = {"user": user, "user_donations": user_donations}
     return render(request, "users/show_donations.html", context)
