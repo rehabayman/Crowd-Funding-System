@@ -52,6 +52,19 @@
                 </fieldset>
                 <input type="submit" class="form-control btn btn-dark ml-3" style="display: inline-block; width: 5rem;" value="Rate"/>
             </form>
+            {{error}}  
+
+            {{message}}
+
+            <P>Total donations is: {{total}}</P>
+
+            {% if not Done %}
+            <form method="post">{% csrf_token %}
+                {{ form.as_p }}    
+                <input type="submit" class="btn" value="donate">
+            </form>
+            {% endif %}
+
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
         </div>
     </div>
