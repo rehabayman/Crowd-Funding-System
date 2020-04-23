@@ -1,0 +1,37 @@
+<div class='d-flex justify-content-center align-items-center flex-column'>
+    <div class="p-2 w-100 border border-info rounded bg-light">
+        <div class="modal-header">
+            <button type="button" class="close btn btn-danger" data-dismiss="modal">x</button>
+        </div>
+        <h3>Report {{project.title}}</h3>
+        <form  method="post" class='reportForm form'>
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }} 
+            </div>
+            <div class="modal-footer col text-center">
+                <button class="btn btn-primary report" type='submit'>Send Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+$('.reportForm').on('submit', function() {
+        $.ajax({ 
+            type: $(this).attr('method'), 
+            url: $(this).closest("[class^='modal']").prev().data('form'), 
+            data: $(this).serialize(),
+            context: this,
+            success: function(data, status) {
+                $(this).closest("[class^='modal']").modal('hide');
+                alert("report added successfully")
+            },
+            error:function(res){
+                alert(res.responseJSON.error)
+            }
+        });
+        return false;
+    });
+</script>

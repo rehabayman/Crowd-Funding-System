@@ -3,6 +3,8 @@ from users.models import User
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.db.models import Avg, Sum
+from django.utils.html import format_html
+from django.urls import reverse
 
 # Create your models here.
 class Project(models.Model):
@@ -64,6 +66,14 @@ class Project_Reports(models.Model):
     report = models.TextField(max_length=500, null=False, blank=False)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    def report_id(self):
+        return self.id
+
+    def project_actions(self):
+        url = reverse('project_details', args=(self.project.id,))
+        return format_html("<a class='button' href='%s'>View</a> <a class='button' href='%s'>Delete</a>" % (url , (url+"/delete")))
+    
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

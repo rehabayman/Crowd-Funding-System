@@ -7,4 +7,5 @@ urlpatterns = [
     path('<uuid:project_id>', views.project_details, name='project_details'),
     path('', views.index, name='index'),
     path('new',new_project),
+    path('report/<uuid:project_id>',views.report_project, name='report_project'),
 ]

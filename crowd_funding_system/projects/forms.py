@@ -1,6 +1,7 @@
 from django import forms
+from django.forms import ModelForm
 
-from .models import Project
+from .models import Project,Project_Reports
 
 class new_project_form(forms.ModelForm):
     class Meta:
@@ -14,3 +15,8 @@ class new_project_form(forms.ModelForm):
             'creator',
             'category'
         ]
+
+class ReportForm(ModelForm):
+    class Meta:
+        model = Project_Reports
+        fields = ['report',]
