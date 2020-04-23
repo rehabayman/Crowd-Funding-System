@@ -1,19 +1,26 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-   
+{% extends 'projects/base.html' %}
+{% load static %}   
+    {% block title %}
+        {{project.project.title}}'s Details
+    {% endblock %}
 
+    {% block extra_style %}
+        <script src="https://kit.fontawesome.com/ff27dc7c39.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'projects/star_style.css' %}" type="text/css">
+    {% endblock %}
+
+{% block my_content %}
 <div class='container'>
     <div class=" mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
-        <h5 class="">{{project.title}}</h5>
+        <h5 class="">{{project.project.title}}</h5>
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-                {% for project_image in project.images %}
+                {% for project_image in project.project.images %}
                 <li data-target="#carouselExampleIndicators" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
                 {% endfor %}
             </ol>
             <div class="carousel-inner">
-                {% for project_image in project.images %}
+                {% for project_image in project.project.images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <img src="/media/{{project_image.picture}}" class="card-img-top d-block w-100 h-50" alt={{project.title}}>
                 </div>
@@ -27,26 +34,49 @@
             </a>
         </div>
         <div class="">
-            <p class="">Created By: {{ project.creator.first_name }} {{ project.creator.last_name }} </p>
-            <p class="">Details: {{ project.details }}</p>
-            <p class="">Total Target: {{ project.total_target }}</p>
-            <p class="">Start Date: {{ project.start_date }}</p>
-            <p class="">End Date: {{ project.end_date }}</p>
-            <p class="">Category: {{ project.category.category_name }}</p>
-            <p class="">Avg. Rating: {{ project.average_rating }}</p> 
-            <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
+            <p class="">Created By: {{ project.project.creator.first_name }} {{ project.project.creator.last_name }} </p>
+            <p class="">Details: {{ project.project.details }}</p>
+            <p class="">Total Target: {{ project.project.total_target }}</p>
+            <p class="">Start Date: {{ project.project.start_date }}</p>
+            <p class="">End Date: {{ project.project.end_date }}</p>
+            <p class="">Category: {{ project.project.category.category_name }}</p>
+            <p class="">Avg. Rating: {{ project.project.average_rating }}</p>
+            <form action="{% url 'projects:edit_project_rating' project.project.id %}" method="post" style="display: block;">
+                {% csrf_token %}
+                <fieldset class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" {% if rating == 5 %} checked {% endif %} /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" {% if rating == 4 %} checked {% endif %}  /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" {% if rating == 3 %} checked {% endif %}  /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" {% if rating == 2 %} checked {% endif %}  /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" {% if rating == 1 %} checked {% endif %}  /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                </fieldset>
+                <input type="submit" class="form-control btn btn-dark ml-3" style="display: inline-block; width: 5rem;" value="Rate"/>
+            </form>
+            {{error}}  
+
+            {{message}}
+
+            <P>Total donations is: {{total}}</P>
+
+            {% if not Done %}
+            <form method="post">{% csrf_token %}
+                {{ form.as_p }}    
+                <input type="submit" class="btn" value="donate">
+            </form>
+            {% endif %}
+            <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
             <div class='modal hide w-50 container'></div>
-            <a href="{% url 'index'%}" class="btn btn-primary">Back to all projects</a>
+            <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
         </div>
     </div>
 </div>
 
-{% if similar_projects%}
+{% if project.similar_projects%}
 <div class='container'>
 <h2 class='mt-5'>Similar Projects:</h2>
-    {% for project in similar_projects %}
+    {% for project in project.similar_projects %}
         <div class="mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
-            <a href="{% url 'project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
+            <a href="{% url 'projects:project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {% for project_image in project.images %}
@@ -91,3 +121,5 @@
         });
     });
 </script>
+
+{% endblock %}

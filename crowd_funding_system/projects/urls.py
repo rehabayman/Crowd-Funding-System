@@ -1,11 +1,17 @@
 from django.urls import path
+from .views import ProjectDetails, ProjectDelete,new_project, new_project, edit_project_rating
 from . import views
-from .views import new_project
 
+app_name="projects"
 
-urlpatterns = [
-    path('<uuid:project_id>', views.project_details, name='project_details'),
-    path('', views.index, name='index'),
+urlpatterns=[   
     path('new',new_project),
     path('report/<uuid:project_id>',views.report_project, name='report_project'),
+    path('<id>',ProjectDetails.as_view() , name="project_details"),
+    path('<id>/delete',ProjectDelete.as_view() , name="project_delete"),
+    path('<str:id>/edit', edit_project_rating, name="edit_project_rating"),
+    # path('<uuid:project_id>', views.project_details, name='project_details'),
+    path('', views.index, name='index'),
 ]
+
+

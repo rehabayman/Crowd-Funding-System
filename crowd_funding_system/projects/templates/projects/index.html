@@ -1,14 +1,21 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+{% extends 'projects/base.html' %}
+{% load static %}   
+    {% block title %}
+        Projects
+    {% endblock %}
 
+{% block my_content %}
 <div class='container mx-auto justify-content-between'>
     <h1 class="text-center my-5">Projects List</h1>
+   <form method="get">
 
+       {{myFilter.form}}
+    <button class="btn btn-primary" type="submit">Search</button>
+   </form>
     {% for project in projects %}
     <div class='container'>
         <div class="mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
-            <a href="{% url 'project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
+            <a href="{% url 'projects:project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {% for project_image in project.images %}
@@ -39,7 +46,6 @@
                 <p class="">Avg. Rating: {{ project.average_rating }}</p>
                 <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
                 <div class='modal hide w-50 container' ></div>
-
             </div>
         </div>
     </div>
@@ -54,3 +60,4 @@
         });
     </script>
 </div>
+{% endblock %}

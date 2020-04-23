@@ -31,7 +31,7 @@
         </h4>
 
         <h4>Birthdate:
-            {% if user.birthdate != nill %}
+            {% if user.birthdate != None %}
             {{user.birthdate}}
             {% else %}
             Not Provided
@@ -39,7 +39,7 @@
         </h4>
 
         <h4>Facebook Profile:
-            {% if user.fb_link != nill %}
+            {% if user.fb_link != None %}
             <a href="{{user.fb_link}}">{{user.fb_link}}</a>
             {% else %}
             Not Provided
