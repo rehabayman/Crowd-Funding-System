@@ -77,7 +77,7 @@ class Project_Reports(models.Model):
         return self.id
 
     def project_actions(self):
-        url = reverse('project_details', args=(self.project.id,))
+        url = reverse('projects:project_details', args=(self.project.id,))
         return format_html("<a class='button' href='%s'>View</a> <a class='button' href='%s'>Delete</a>" % (url , (url+"/delete")))
     
 

@@ -202,7 +202,9 @@ def report_project(request,project_id):
             form.user_id = request.user.id
             if check_before_report(form.project_id,form.user_id):
                 form.save()
-                return redirect('project_details', project_id)
+                response = JsonResponse({"success": "Project reported successfully"})
+                response.status_code = 200
+                return response
             else:
                 response = JsonResponse({"error": "Sorry you have already reported this project !"})
                 response.status_code = 403
