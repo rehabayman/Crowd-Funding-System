@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'projects',
+    'crispy_forms',
     'django_countries',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -82,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowd_funding_system',
         'USER': 'root',
-        'PASSWORD':'123456',
+        'PASSWORD':'',
         'HOST': '127.0.0.1'
     }
 }
@@ -128,3 +129,8 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+AUTH_USER_MODEL = "users.User"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"

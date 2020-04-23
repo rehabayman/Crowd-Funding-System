@@ -11,6 +11,78 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from projects.models import Project, User_Donations
 from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from users.forms import RegisterForm, LoginForm
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+
+
+# Create your views here.
+
+
+def register_user(request):
+    context = {}
+    user_creation_form = RegisterForm()
+
+    if( request.method == "POST"):
+        print("post request god damn")
+        user_creation_form = RegisterForm(request.POST)
+        if(user_creation_form.is_valid()):
+            print( "form is valid and probabbly will be saved")
+            # print(UserCreationForm.is_active)
+            user_creation_form.save()
+            context['message'] = "registered succcessfully."
+            context["form"] = user_creation_form
+            return render(request, "register.html", context )
+
+
+    context = { "form": user_creation_form }
+    return render(request, "register.html", context )
+
+    
+
+def login_user(request):
+    context = {}
+    if request.method == 'POST':
+
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        # form = LoginForm(request.POST)
+        # print(form.is_valid())
+        print(username)
+        print(password)
+        if( username != "" and len(password) >= 8 ):
+            user = authenticate(username=username, password=password)
+            if user:
+                print("user is authenticated")
+                if user.is_active:
+                    login( request, user)
+                    context["message"] = "Logged in successfully"
+                    return render(request, "login.html", context)
+                else:
+                    context["message"] = "Your account is not activated yet"
+                    return render(request, "login.html", context)
+            else:
+                print("user is not authenticated")
+                print( user)
+                context["message"] = "Couldn't find or wrong credentials."
+                # context['form'] = LoginForm
+                return render(request, "login.html", context)
+
+        elif(password < 8 ):
+            context["message"] = "password is less than 8 characters."
+            return render(request, "login.html", context)
+    # context['form'] = LoginForm
+    return render(request, "login.html", context)
+
+
+
+def logout_user(request):
+    context = {}
+    logout(request)
+    return render(request, "home.html", context)
 
 class ProfileUpdate(LoginRequiredMixin,UpdateView):
     form_class= UserModelForm    
