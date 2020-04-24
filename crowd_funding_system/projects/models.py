@@ -13,6 +13,8 @@ class Project(models.Model):
     total_target = models.DecimalField(null=False, blank=False, max_digits=9, decimal_places=2)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_featured = models.BooleanField(default=False)
     creator = models.ForeignKey("users.User", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
     
@@ -25,7 +27,8 @@ class Project(models.Model):
     def images(self):
         return Project_Pictures.objects.filter(project_id = self.id)
         
-    def get_donations_of_project(self):
+    @property
+    def donations(self):
         total_donations = self.user_donations_set.aggregate(Sum('amount'))
         return total_donations["amount__sum"]
 

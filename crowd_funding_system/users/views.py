@@ -83,20 +83,29 @@ def test_home(request):
 
 @login_required
 def show(request, id):
+    # if id == request.user.id:
     user = User.objects.filter(id=id)[0]
     context = {"user": user}
     return render(request, "users/show.html", context)
+    # else:
+        # raise PermissionDenied()
 
 @login_required
 def show_projects(request, id):
+    # if id == request.user.id:
     user = User.objects.filter(id=id)[0]
     user_projects = user.project_set.all()
     context = {"user": user, "user_projects": user_projects}
     return render(request, "users/show_projects.html", context)
+    # else:
+        # raise PermissionDenied()
 
 @login_required
 def show_donations(request, id):
+    # if id == request.user.id:
     user = User.objects.filter(id=id)[0]
     user_donations = user.user_donations_set.all()
     context = {"user": user, "user_donations": user_donations}
     return render(request, "users/show_donations.html", context)
+    # else:
+        # raise PermissionDenied()
