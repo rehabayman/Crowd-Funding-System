@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project, Project_Ratings, User_Donations
 from users.models import User
-from .forms import AddProjectRatingForm, UserDonationsModelForm
 from django.views.generic.edit import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.core.validators import ValidationError
 from django.db.models import Sum
@@ -12,7 +10,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from .forms import new_project_form
+from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
 
@@ -165,6 +163,16 @@ def index(request):
 #     # return render(request,"projects/project_details.html",project)
 
 
+@login_required
+def project_details(request,project_id):
+    target_project = Project.objects.get(id=project_id)
+    if request.method.lower() == 'get':
+        similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+        project = {"project": target_project,"similar_projects": similar_projects}
+        return render(request,"projects/project_details.html",project)
+    elif request.method.lower() == 'delete':
+        return render(request,"projects/index.html",projects)
+
 #     return render(request,"projects/project_details.html",{"project": project, "rating": rating})
 
 # @login_required
@@ -176,7 +184,34 @@ def new_project(request):
     context = {
         'form': form
     }
-    return render(request, "projects/new_project.html", context)
+    return render (request, "projects/new_project.html", context)
+
+def check_before_report(project_id,user_id):
+    if Project_Reports.objects.filter(project_id=project_id,user_id=user_id):
+        return False
+    else:
+        return True
+
+@login_required
+def report_project(request,project_id):  
+    if request.method.upper() == 'POST': 
+        form = ReportForm(request.POST) 
+        if form.is_valid(): 
+            form = form.save(commit=False)
+            form.project_id = project_id
+            form.user_id = request.user.id
+            if check_before_report(form.project_id,form.user_id):
+                form.save()
+                response = JsonResponse({"success": "Project reported successfully"})
+                response.status_code = 200
+                return response
+            else:
+                response = JsonResponse({"error": "Sorry you have already reported this project !"})
+                response.status_code = 403
+                return response
+    elif request.method.upper() == 'GET':
+        form = ReportForm() 
+        return render(request, 'projects/report_project.html', {'form' : form})
 
 
 def edit_project_rating(request, id):

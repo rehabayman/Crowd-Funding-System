@@ -1,5 +1,6 @@
 from django import forms
-from .models import Project, Project_Ratings, User_Donations
+from django.forms import ModelForm
+from .models import Project, Project_Ratings, User_Donations, Project_Reports
 import decimal
 
 class AddProjectRatingForm(forms.ModelForm):   
@@ -33,3 +34,8 @@ class new_project_form(forms.ModelForm):
             'creator',
             'category'
         ]
+
+class ReportForm(ModelForm):
+    class Meta:
+        model = Project_Reports
+        fields = ['report',]

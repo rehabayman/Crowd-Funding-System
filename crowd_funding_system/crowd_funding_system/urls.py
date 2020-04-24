@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import homepage_index
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),

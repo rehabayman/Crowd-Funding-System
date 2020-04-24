@@ -44,11 +44,20 @@
                 <p class="">End Date: {{ project.end_date }}</p>
                 <p class="">Category: {{ project.category.category_name }}</p>
                 <p class="">Avg. Rating: {{ project.average_rating }}</p>
+                <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
+                <div class='modal hide w-50 container' ></div>
             </div>
         </div>
     </div>
     {% empty%}
     No project found
     {% endfor %}
+    <script>
+        $(".btn-warning").click(function(){
+            $(this).next().load($(this).data('form'), () => {
+            $(this).next().modal("show");
+            });
+        });
+    </script>
 </div>
 {% endblock %}

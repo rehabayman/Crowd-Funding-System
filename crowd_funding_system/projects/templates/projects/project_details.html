@@ -64,7 +64,8 @@
                 <input type="submit" class="btn" value="donate">
             </form>
             {% endif %}
-
+            <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
+            <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
         </div>
     </div>
@@ -104,6 +105,8 @@
                 <p class="">End Date: {{ project.end_date }}</p>
                 <p class="">Category: {{ project.category.category_name }}</p>
                 <p class="">Avg. Rating: {{ project.average_rating }}</p>
+                <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
+                <div class='modal hide w-50 container'></div>
             </div>
         </div>
     {% empty%}
@@ -111,5 +114,12 @@
     {% endfor %}
 </div>
 {% endif %}
+<script>
+    $(".btn-warning").click(function(){
+        $(this).next().load($(this).data('form'), () => {
+        $(this).next().modal("show");
+        });
+    });
+</script>
 
 {% endblock %}
