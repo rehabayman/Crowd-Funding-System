@@ -1,7 +1,38 @@
-{{message}}
-{% if not object.cant %}
-<form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-</form>
-{% endif %}
+
+<div class='d-flex justify-content-center align-items-center flex-column'>
+    <div class="p-2 w-100 border border-info rounded bg-light">
+        <div class="modal-header">
+            <button type="button" class="close btn btn-danger" data-dismiss="modal">x</button>
+        </div>
+        <p class="error"></p>
+        <h3>Delete {{project.title}}</h3>
+            {% if not object.cant %}
+            <form method="post" class='deleteForm form'>{% csrf_token %}
+                <p>Are you sure you want to delete "{{ object }}"?</p>
+                <input type="submit" value="Confirm">
+            </form>
+            {% endif %}
+       
+    </div>
+</div>
+
+
+<script>
+$('.deleteForm').on('submit', function() {
+   
+        $.ajax({ 
+            type: $(this).attr('method'), 
+            url: $(this).closest("[class^='modal']").prev().data('form'), 
+            data: $(this).serialize(),
+            context: this,
+            success: function(data, status) {
+                $(this).closest("[class^='modal']").modal('hide');
+                window.location.replace('http://127.0.0.1:8000/projects/')
+            },
+            error:function(res){
+                $(".error").append(" <b>"+res.responseJSON.error+"</b>.");
+            }
+        });
+        return false;
+    });
+</script>
