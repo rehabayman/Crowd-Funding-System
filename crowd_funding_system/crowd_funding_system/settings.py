@@ -59,7 +59,7 @@ ROOT_URLCONF = 'crowd_funding_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'crowd_funding_system', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,9 +83,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowd_funding_system',
         'USER': 'root',
-        'PASSWORD':'',
-        'HOST': '127.0.0.1'
+        'PASSWORD':'123456',
+        'HOST': '127.0.0.1',
+        'OPTIONS': {
+         "init_command": "SET foreign_key_checks = 0;",
+        },
     }
+    
 }
 
 

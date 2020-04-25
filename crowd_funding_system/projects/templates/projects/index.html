@@ -7,9 +7,11 @@
 {% block my_content %}
 <div class='container mx-auto justify-content-between'>
     <h1 class="text-center my-5">Projects List</h1>
+    <h3>Search by Title or Tag.</h3>
    <form method="get">
 
        {{myFilter.form}}
+       <label>Tag: </label><input type="text" name="tag">
     <button class="btn btn-primary" type="submit">Search</button>
    </form>
     {% for project in projects %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Project, Project_Ratings, User_Donations, Project_Reports
+from .models import Project, Project_Ratings, User_Donations, Project_Reports, Comment
 import decimal
 
 class AddProjectRatingForm(forms.ModelForm):   
@@ -20,6 +20,12 @@ class UserDonationsModelForm(forms.ModelForm):
             raise forms.ValidationError("Amount is invalid")
         return amount
     
+class comment_form(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = [
+            'comment',
+        ]
 
 
 class new_project_form(forms.ModelForm):

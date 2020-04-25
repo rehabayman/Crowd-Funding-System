@@ -22,7 +22,7 @@
             <div class="carousel-inner">
                 {% for project_image in project.project.images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="/media/{{project_image.picture}}" class="card-img-top d-block w-100 h-50" alt={{project.title}}>
+                    <img src="/media/{{project_image.picture}}" class="card-img-top d-block w-100 h-50" alt={{project.title}}>
                 </div>
                 {% endfor %}
             </div>
@@ -64,11 +64,43 @@
                 <input type="submit" class="btn" value="donate">
             </form>
             {% endif %}
+            {% if project.project.creator == user %}
+            <a  class='rp-btn btn btn-warning' data-form="./{{ project.project.id }}/delete" >Delete</a>
+            <div class='modal hide w-50 container'></div>
+            {% endif %}
             <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
             <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
         </div>
     </div>
+</div>
+
+<div>
+    <div class="col-md-6 comment" style="text-align: center;">  
+        <h2>Comments</h2> 
+        {% for comment in comments %}
+            <table>
+                <tr>
+                <td><h5>{{comment.comment}}</h5></td>  
+                </tr>
+                <tr>
+                <td style="margin:20px;">{{comment.created_at}}</td>
+                <td>created by: {{comment.user.first_name}}</td>  
+                
+                </tr>
+                
+            </table>
+                
+            
+        {% endfor %}
+       
+        <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="comment">
+            <input type="submit" class="btn btn-primary" value="Comment">
+        </form>
+    </div>
+</div>
 </div>
 
 {% if project.similar_projects%}
