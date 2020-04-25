@@ -84,8 +84,12 @@ DATABASES = {
         'NAME': 'crowd_funding_system',
         'USER': 'root',
         'PASSWORD':'',
-        'HOST': '127.0.0.1'
+        'HOST': '127.0.0.1',
+        'OPTIONS': {
+         "init_command": "SET foreign_key_checks = 0;",
+        },
     }
+    
 }
 
 

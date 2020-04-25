@@ -43,7 +43,7 @@ class ProjectDetails(CreateView):
 
         current_user = User.objects.all()[0]
         project_rating = Project.objects.filter(
-            id=self.kwargs['id'], creator=current_user.id)[0].project_ratings_set.all()
+            id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
         if project_rating.count() != 0:
             rating = project_rating[0].rating
@@ -66,7 +66,7 @@ class ProjectDetails(CreateView):
         form = UserDonationsModelForm(request.POST)
         p = Project.objects.get(id__exact=id)
         project_rating = Project.objects.filter(
-            id=self.kwargs['id'], creator=current_user.id)[0].project_ratings_set.all()
+            id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
         if project_rating.count() != 0:
             rating = project_rating[0].rating
@@ -221,7 +221,7 @@ def edit_project_rating(request, id):
     # else:
     #     pass
     current_user = User.objects.all()[0]
-    project_rating = Project.objects.filter(id=id, creator=current_user.id)[0].project_ratings_set.all()
+    project_rating = Project.objects.filter(id=id)[0].project_ratings_set.filter(user=current_user.id)
     project = Project.objects.filter(id=id)[0]
     if request.method == "GET":
         rating = 0
