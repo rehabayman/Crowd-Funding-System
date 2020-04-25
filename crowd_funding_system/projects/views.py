@@ -141,7 +141,7 @@ class ProjectDelete(DeleteView):
 
 # @login_required
 
-
+@login_required
 def index(request):
     projects = Project.objects.all()
     myFilter = ProjectFilter(request.GET, queryset=projects)
