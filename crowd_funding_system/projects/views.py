@@ -64,12 +64,14 @@ class ProjectDetails(CreateView):
 
         total = get_total_donations(id)
         form = UserDonationsModelForm(request.POST)
-        p = Project.objects.get(id__exact=id)
+        # p = Project.objects.get(id__exact=id)
         project_rating = Project.objects.filter(
             id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
+
         if project_rating.count() != 0:
             rating = project_rating[0].rating
+
         target_project = Project.objects.get(id=self.kwargs['id'])
         similar_projects = Project.objects.filter(
             category=target_project.category).exclude(id=target_project.id)[:4]
@@ -78,7 +80,7 @@ class ProjectDetails(CreateView):
 
         if form.is_valid():
 
-            if p.total_target < decimal.Decimal(request.POST['amount']) + total:
+            if target_project.total_target < decimal.Decimal(request.POST['amount']) + total:
                 context = {
                     "form": form, "error": "Donations Exceeded Total Target", "total": total}
                 context["project"] = project
@@ -86,8 +88,8 @@ class ProjectDetails(CreateView):
                 return render(request, self.template_name, context)
 
             form.instance.project_id = self.kwargs['id']
-            # form.instance.user_id= self.request.user
-            form.instance.user_id = "45937d98d5434d7c9b83f5b208dabe86"
+            form.instance.user_id= self.request.user.id
+            # form.instance.user_id = "45937d98d5434d7c9b83f5b208dabe86"
             form.save()
             form = UserDonationsModelForm()
             total = get_total_donations(id)
@@ -111,31 +113,31 @@ class ProjectDelete(DeleteView):
     template_name = 'projects/project_confirm_delete.html'
     # login_url = '/login/'
     # redirect_field_name = 'redirect_to'
-
+    
     def get_object(self):
-
         id_ = self.kwargs.get("id")
         project = Project.objects.get(id__exact=id_)
         total = get_total_donations(self.kwargs.get("id"))
 
-        # if project.creator == self.request.user:
-        return get_object_or_404(Project, id=id_)
+        if project.creator == self.request.user:
+            return get_object_or_404(Project, id=id_)
         context = {"cant": "True"}
         return context
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        user = User.objects.get(id__exact="237450c29a95421eb5d06e60cdf7937b")
+        self.object = self.get_object()        
         total = get_total_donations(self.kwargs.get("id"))
-        if self.object.creator == user:
+        if self.object.creator == request.user:
             if decimal.Decimal(total) < decimal.Decimal(self.object.total_target) * decimal.Decimal(0.25):
                 self.object.delete()
                 return HttpResponseRedirect(self.get_success_url())
             else:
-                return render(request, self.template_name, {"message": "Failed. Donations are more than 25% of project target", "object": self.object})
+                response = JsonResponse({"error": "Failed. Donations are more than 25% of project target"})
+                response.status_code = 403
+                return response
         else:
             raise PermissionDenied()
-    success_url = '/'
+    success_url = '/projects'
 
 # Create your views here.
 

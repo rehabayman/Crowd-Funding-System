@@ -64,6 +64,10 @@
                 <input type="submit" class="btn" value="donate">
             </form>
             {% endif %}
+            {% if project.project.creator == user %}
+            <a  class='rp-btn btn btn-warning' data-form="./{{ project.project.id }}/delete" >Delete</a>
+            <div class='modal hide w-50 container'></div>
+            {% endif %}
             <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
             <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
