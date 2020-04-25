@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowd_funding_system',
         'USER': 'root',
-        'PASSWORD':'',
+        'PASSWORD':'123456',
         'HOST': '127.0.0.1',
         'OPTIONS': {
          "init_command": "SET foreign_key_checks = 0;",

@@ -10,7 +10,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm
+from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm,comment_form
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
 
@@ -32,52 +32,58 @@ class ProjectDetails(CreateView):
     # redirect_field_name = 'redirect_to'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProjectDetails, self).get_context_data(*args, **kwargs)
-        total = get_total_donations(self.kwargs['id'])
-        p = Project.objects.get(id__exact=self.kwargs['id'])
 
-        if total >= p.total_target:
+        project_id= self.kwargs['id']  
+        user= self.request.user      
+        context = super(ProjectDetails, self).get_context_data(*args, **kwargs)
+        total_donations = get_total_donations(project_id)
+        p = Project.objects.get(id__exact=project_id)       
+        comments = Comment.objects.filter(project=p.id)        
+        
+
+        if total_donations >= p.total_target:
             context = {"Done": "True", "message": "Project reached the target"}
 
-        context["total"] = total
+        context["total"] = total_donations
 
         current_user = User.objects.all()[0]
         project_rating = Project.objects.filter(
-            id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
+            id=project_id)[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
         if project_rating.count() != 0:
             rating = project_rating[0].rating
-        target_project = Project.objects.get(id=self.kwargs['id'])
+        
+        target_project = Project.objects.get(id=project_id)        
         similar_projects = Project.objects.filter(
             category=target_project.category).exclude(id=target_project.id)[:4]
+        
         project = {"project": target_project,
                    "similar_projects": similar_projects}
-        # return render(request,"projects/project_details.html",project)
 
         context["project"] = project
         context["rating"] = rating
-        # return render(request,"projects/project_details.html",{"project": project, "rating": rating})
+        context['comments']= comments
         return context
 
     def post(self, request, id):
         current_user = User.objects.all()[0]
-
         total = get_total_donations(id)
-        form = UserDonationsModelForm(request.POST)
-        # p = Project.objects.get(id__exact=id)
+        ####### rating########
         project_rating = Project.objects.filter(
             id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
-
         if project_rating.count() != 0:
             rating = project_rating[0].rating
-
+        
         target_project = Project.objects.get(id=self.kwargs['id'])
+        comments = Comment.objects.filter(project=target_project.id)
         similar_projects = Project.objects.filter(
             category=target_project.category).exclude(id=target_project.id)[:4]
         project = {"project": target_project,
                    "similar_projects": similar_projects}
 
+        ###### Donations form #######
+        form = UserDonationsModelForm(request.POST)
         if form.is_valid():
 
             if target_project.total_target < decimal.Decimal(request.POST['amount']) + total:
@@ -85,26 +91,28 @@ class ProjectDetails(CreateView):
                     "form": form, "error": "Donations Exceeded Total Target", "total": total}
                 context["project"] = project
                 context["rating"] = rating
+                context["comments"]=comments
                 return render(request, self.template_name, context)
 
             form.instance.project_id = self.kwargs['id']
             form.instance.user_id= self.request.user.id
-            # form.instance.user_id = "45937d98d5434d7c9b83f5b208dabe86"
             form.save()
             form = UserDonationsModelForm()
+            
             total = get_total_donations(id)
-
-            # return render(request,"projects/project_details.html",project)
-
+            ## set context ####
             context = {
                 "form": form, "message": "You have Donated successfully", "total": total}
             context["project"] = project
             context["rating"] = rating
+            context['comments']=comments        
             return render(request, self.template_name, context)
-
+        ## set context ####
         context = {"form": form, "total": total}
         context["project"] = project
         context["rating"] = rating
+        context['comments']=comments      
+
         return render(request, self.template_name, context)
 
 
@@ -157,32 +165,6 @@ def index(request):
         context["projects"] = myFilter.qs
         # projects = {"projects": projects, "myFilter": myFilter} #, "TagFilter": projectTagged
     return render(request, "projects/index.html", context)
-
-# @login_required
-# def project_details(request,project_id):
-#     # This is for testing right now
-#     current_user = User.objects.all()[0]
-#     project_rating = Project.objects.filter(id=project_id, creator = current_user.id)[0].project_ratings_set.all()
-#     rating = 0
-#     if project_rating.count() != 0:
-#         rating = project_rating[0].rating
-#     target_project = Project.objects.get(id=project_id)
-#     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
-#     project = {"project": target_project,"similar_projects": similar_projects}
-#     # return render(request,"projects/project_details.html",project)
-
-
-@login_required
-def project_details(request,project_id):
-    target_project = Project.objects.get(id=project_id)
-    if request.method.lower() == 'get':
-        similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
-        project = {"project": target_project,"similar_projects": similar_projects}
-        return render(request,"projects/project_details.html",project)
-    elif request.method.lower() == 'delete':
-        return render(request,"projects/index.html",projects)
-
-#     return render(request,"projects/project_details.html",{"project": project, "rating": rating})
 
 # @login_required
 def new_project(request):
@@ -256,20 +238,19 @@ def edit_project_rating(request, id):
 
 ####### Adding comment #########
 # @login_required
-# def project_details(request,project_id):
-#     target_project = Project.objects.get(id=project_id)
-#     comments = Comment.objects.filter(project=target_project.id)
-#     commentform = comment_form(request.POST)
-#     if request.method == 'POST':
-#         if commentform.is_valid():
-#             comment = commentform.save(commit=False)
-#             comment.project = target_project
-#             Comment.user = request.user
-#             comment.save()
-#             commentform = comment_form()
-#             redirect('project_details', project_id)            
-#     else:
-#         commentform = comment_form()
-#     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
-#     project = {"project": target_project,"similar_projects": similar_projects, "form": commentform, "comments":comments }
-#     return render(request,"projects/project_details.html",project)
+def add_comment(request,project_id):
+    target_project = Project.objects.get(id=project_id)
+    commentform = comment_form(request.POST)
+
+    if request.method == 'POST':
+        if commentform.is_valid():
+            comment = commentform.save(commit=False)
+            comment.project = target_project            
+            comment.user = request.user            
+            comment.save()
+            commentform = comment_form()
+            redirect('projects:project_details', project_id)            
+    else:
+        commentform = comment_form()
+    similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+    return redirect('projects:project_details', id=project_id)

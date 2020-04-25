@@ -93,9 +93,10 @@
                 
             
         {% endfor %}
-        <form method="post">
+       
+        <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
             {% csrf_token %}
-            {{form.as_p}}
+            <input type="text" name="comment">
             <input type="submit" class="btn btn-primary" value="Comment">
         </form>
     </div>
