@@ -75,6 +75,33 @@
     </div>
 </div>
 
+<div>
+    <div class="col-md-6 comment" style="text-align: center;">  
+        <h2>Comments</h2> 
+        {% for comment in comments %}
+            <table>
+                <tr>
+                <td><h5>{{comment.comment}}</h5></td>  
+                </tr>
+                <tr>
+                <td style="margin:20px;">{{comment.created_at}}</td>
+                <td>created by: {{comment.user.first_name}}</td>  
+                
+                </tr>
+                
+            </table>
+                
+            
+        {% endfor %}
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-primary" value="Comment">
+        </form>
+    </div>
+</div>
+</div>
+
 {% if project.similar_projects%}
 <div class='container'>
 <h2 class='mt-5'>Similar Projects:</h2>

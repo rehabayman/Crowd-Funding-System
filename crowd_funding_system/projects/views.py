@@ -139,7 +139,6 @@ class ProjectDelete(DeleteView):
             raise PermissionDenied()
     success_url = '/projects'
 
-# Create your views here.
 
 # @login_required
 
@@ -190,7 +189,7 @@ def new_project(request):
     form = new_project_form(request.POST or None)
     if form.is_valid():
         form.save()
-
+        return redirect('/projects/')
     context = {
         'form': form
     }
@@ -253,3 +252,24 @@ def edit_project_rating(request, id):
                 new_rating.save()
             rating = rating_form.cleaned_data['rating']
         return redirect('projects:project_details', id=id)
+
+
+####### Adding comment #########
+# @login_required
+# def project_details(request,project_id):
+#     target_project = Project.objects.get(id=project_id)
+#     comments = Comment.objects.filter(project=target_project.id)
+#     commentform = comment_form(request.POST)
+#     if request.method == 'POST':
+#         if commentform.is_valid():
+#             comment = commentform.save(commit=False)
+#             comment.project = target_project
+#             Comment.user = request.user
+#             comment.save()
+#             commentform = comment_form()
+#             redirect('project_details', project_id)            
+#     else:
+#         commentform = comment_form()
+#     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+#     project = {"project": target_project,"similar_projects": similar_projects, "form": commentform, "comments":comments }
+#     return render(request,"projects/project_details.html",project)

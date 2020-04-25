@@ -86,18 +86,13 @@ class Project_Reports(models.Model):
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    comment = models.TextField(max_length=500, null=False, blank=False)
+    comment = models.TextField(max_length=500, null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey("users.User" ,on_delete=models.CASCADE)
+    project = models.ForeignKey("Project" ,on_delete=models.CASCADE)
 
 class Comment_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     report = models.TextField(max_length=500, null=False, blank=False)
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-
-class Project_Comments(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    comment_text = models.TextField(max_length=500, null=False, blank=False)
-    comment_id = models.ForeignKey("Comment", on_delete=models.CASCADE)
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    project = models.ForeignKey("Project", on_delete=models.CASCADE)
