@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm
 from django.contrib.auth.decorators import login_required
-from .filters import ProjectFilter, ProjectTagFilter
+from .filters import ProjectFilter
 
 
 def get_total_donations(id):
@@ -145,18 +145,19 @@ class ProjectDelete(DeleteView):
 
 
 def index(request):
-    projects = Project.objects.all()
-    myFilter = ProjectFilter(request.GET, queryset=projects)
+    context = {}
+    context["projects"] = Project.objects.all()
+    context["myFilter"] = ProjectFilter(request.GET, queryset=context["projects"])
 
     tag = request.GET.get("tag")
     if( tag ):
-        projects = Project.objects.raw("Select * from projects_project, projects_project_tags WHERE projects_project_tags.tag = %s AND projects_project.id = projects_project_tags.project_id", [tag])
-        print(projects)   
+        context["projects"] = Project.objects.raw("Select * from projects_project, projects_project_tags WHERE projects_project_tags.tag = %s AND projects_project.id = projects_project_tags.project_id", [tag])
+        print(context["projects"])   
     elif(request.GET.get("title")):
-        myFilter = ProjectFilter(request.GET, queryset=projects)
-        projects = myFilter.qs
+        myFilter = ProjectFilter(request.GET, queryset=context["projects"])
+        context["projects"] = myFilter.qs
         # projects = {"projects": projects, "myFilter": myFilter} #, "TagFilter": projectTagged
-    return render(request, "projects/index.html", {"projects": projects, "myFilter": myFilter})
+    return render(request, "projects/index.html", context)
 
 # @login_required
 # def project_details(request,project_id):
