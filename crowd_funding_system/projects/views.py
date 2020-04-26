@@ -166,10 +166,11 @@ def index(request):
 
 @login_required
 def new_project(request):
-    form = new_project_form(request.POST or None)
+    form = new_project_form(request.POST)
     if form.is_valid():
-        #form.creator = request.user
-        form.save()
+        projform = form.save(commit=False)
+        projform.creator = request.user
+        projform.save()
         return redirect('/projects/')
     context = {
         'form': form
