@@ -66,6 +66,7 @@ class ProjectDetails(CreateView):
         return context
 
     def post(self, request, id):
+        
         current_user = User.objects.all()[0]
         total = get_total_donations(id)
         ####### rating########
@@ -74,7 +75,7 @@ class ProjectDetails(CreateView):
         rating = 0
         if project_rating.count() != 0:
             rating = project_rating[0].rating
-        
+
         target_project = Project.objects.get(id=self.kwargs['id'])
         comments = Comment.objects.filter(project=target_project.id)
         similar_projects = Project.objects.filter(

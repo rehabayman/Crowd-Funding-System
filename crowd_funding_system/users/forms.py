@@ -9,7 +9,7 @@ from django.forms import ModelForm
 class UserModelForm(forms.ModelForm):   
     class Meta:
         model=User
-        exclude=['email']
+        exclude=['username','email','date_joined','is_active','is_superuser','is_staff','is_active','groups','user_permissions','password','last_login']
     def __init__(self, *args, **kwargs):
         super(UserModelForm, self).__init__(*args, **kwargs)
         self.fields['profile_pic'].required = False   
