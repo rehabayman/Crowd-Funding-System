@@ -88,8 +88,8 @@ class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     comment = models.TextField(max_length=500, null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey("users.User" ,on_delete=models.CASCADE)
-    project = models.ForeignKey("Project" ,on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    project = models.ForeignKey("Project", on_delete=models.CASCADE)
 
 class Comment_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

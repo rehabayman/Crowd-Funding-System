@@ -136,5 +136,22 @@ MEDIA_URL = '/media/'
 
 
 AUTH_USER_MODEL = "users.User"
-
+LOGIN_URL = '/users/login/'
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# ## Email Backend using Postmark (waiting approval)
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.postmarkapp.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = '96080151-16dd-49a1-bd62-a44db5f8d70f'
+# EMAIL_HOST_PASSWORD = '96080151-16dd-49a1-bd62-a44db5f8d70f'
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = "crowd-funding@siliconboost.com"
+
+# Email Backend using Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'crowd.funding.py.project@gmail.com'
+EMAIL_HOST_PASSWORD = 'cf123456789'
+EMAIL_USE_TLS = True
