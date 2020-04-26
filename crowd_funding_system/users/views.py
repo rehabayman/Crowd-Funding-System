@@ -18,6 +18,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 
@@ -27,12 +28,12 @@ def register_user(request):
     user_creation_form = RegisterForm()
 
     if( request.method == "POST"):
-        print("post request god damn")
-        user_creation_form = RegisterForm(request.POST)
+        uploaded_image = request.FILES["profile_pic"]
+        user_creation_form = RegisterForm(request.POST, request.FILES)
         if(user_creation_form.is_valid()):
-            print( "form is valid and probabbly will be saved")
-            # print(UserCreationForm.is_active)
             user_creation_form.save()
+            fs = FileSystemStorage()
+            fs.save(uploaded_image.name, uploaded_image)
             context['message'] = "registered succcessfully."
             context["form"] = user_creation_form
             return render(request, "register.html", context )
