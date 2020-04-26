@@ -37,7 +37,6 @@ class new_project_form(forms.ModelForm):
             'total_target',
             'start_date',
             'end_date',
-            'creator',
             'category'
         ]
         widgets = {

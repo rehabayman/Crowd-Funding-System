@@ -6,7 +6,7 @@
 {% block my_content %}
 <div class="container d-flex justify-content-center align-items-center flex-column p-2">
     <h1 style="text-align: center;"> New Project </h1>
-    <form method="POST">
+    <form action="{% url 'projects:new_project' %}" method="POST">
         {% csrf_token %}
         {{form.as_p}}
         <input type='submit' value="save" class="btn btn-block btn-primary"/>
