@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Project, Project_Ratings, User_Donations, Project_Reports, Comment
+from .models import *
 import decimal
 
 class AddProjectRatingForm(forms.ModelForm):   
@@ -40,8 +40,20 @@ class new_project_form(forms.ModelForm):
             'creator',
             'category'
         ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class':'form-control', 'style':'width:500px'}),
+            'details': forms.TextInput(attrs={'class':'form-control'}),
+            'total_target': forms.TextInput(attrs={'class':'form-control'}),
+            'start_date': forms.TextInput(attrs={'class':'form-control'}),
+            'end_date': forms.TextInput(attrs={'class':'form-control'}),
+            }
 
 class ReportForm(ModelForm):
     class Meta:
         model = Project_Reports
         fields = ['report',]
+
+class reply_form(ModelForm):
+    class Meta:
+        model = Comment_Replies
+        fields = ['content']

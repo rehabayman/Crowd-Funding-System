@@ -10,7 +10,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm,comment_form
+from .forms import *
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
 
@@ -37,16 +37,15 @@ class ProjectDetails(CreateView):
         user= self.request.user      
         context = super(ProjectDetails, self).get_context_data(*args, **kwargs)
         total_donations = get_total_donations(project_id)
-        p = Project.objects.get(id__exact=project_id)       
-        comments = Comment.objects.filter(project=p.id)        
-        
+        p = Project.objects.get(id__exact=project_id)   
+        comments = Comment.objects.filter(project=p.id)             
 
         if total_donations >= p.total_target:
             context = {"Done": "True", "message": "Project reached the target"}
 
         context["total"] = total_donations
 
-        current_user = User.objects.all()[0]
+        current_user = self.request.user
         project_rating = Project.objects.filter(
             id=project_id)[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
@@ -66,8 +65,7 @@ class ProjectDetails(CreateView):
         return context
 
     def post(self, request, id):
-        
-        current_user = User.objects.all()[0]
+        current_user = request.user
         total = get_total_donations(id)
         ####### rating########
         project_rating = Project.objects.filter(
@@ -106,14 +104,13 @@ class ProjectDetails(CreateView):
                 "form": form, "message": "You have Donated successfully", "total": total}
             context["project"] = project
             context["rating"] = rating
-            context['comments']=comments        
+            context['comments']=comments   
             return render(request, self.template_name, context)
         ## set context ####
         context = {"form": form, "total": total}
         context["project"] = project
         context["rating"] = rating
-        context['comments']=comments      
-
+        context['comments']=comments   
         return render(request, self.template_name, context)
 
 
@@ -151,7 +148,7 @@ class ProjectDelete(DeleteView):
 
 # @login_required
 
-
+@login_required
 def index(request):
     context = {}
     context["projects"] = Project.objects.all()
@@ -167,10 +164,11 @@ def index(request):
         # projects = {"projects": projects, "myFilter": myFilter} #, "TagFilter": projectTagged
     return render(request, "projects/index.html", context)
 
-# @login_required
+@login_required
 def new_project(request):
     form = new_project_form(request.POST or None)
     if form.is_valid():
+        #form.creator = request.user
         form.save()
         return redirect('/projects/')
     context = {
@@ -207,14 +205,13 @@ def report_project(request,project_id):
 
 
 def edit_project_rating(request, id):
-    # current_user = request.user
-    # if request.user.is_authenticated:
-    #     pass
+    current_user = request.user
+    project = Project.objects.filter(id=id)[0]
+    # if request.user.is_authenticated and current_user.id != project.creator_id:
+        # pass
     # else:
     #     pass
-    current_user = User.objects.all()[0]
     project_rating = Project.objects.filter(id=id)[0].project_ratings_set.filter(user=current_user.id)
-    project = Project.objects.filter(id=id)[0]
     if request.method == "GET":
         rating = 0
         if project_rating.count() != 0:
@@ -254,4 +251,20 @@ def add_comment(request,project_id):
     else:
         commentform = comment_form()
     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+    return redirect('projects:project_details', id=project_id)
+
+######## Adding reply on comment ###########
+def add_reply_on_comment(request, project_id, comment_id):
+    replyform = reply_form(request.POST)
+    comment = Comment.objects.get(id=comment_id)
+    if request.method == 'POST':
+        if replyform.is_valid():
+            reply = replyform.save(commit=False)
+            reply.user = request.user
+            reply.comment = comment
+            reply.save()
+            replyform = reply_form()
+            redirect('projects:project_details', project_id)
+        else:
+            replyform = reply_form()
     return redirect('projects:project_details', id=project_id)

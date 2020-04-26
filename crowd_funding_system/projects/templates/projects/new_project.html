@@ -4,10 +4,12 @@
         Add Project
     {% endblock %}
 {% block my_content %}
-<h1> New Project </h1>
-<form method="POST">
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type='submit' value="save"/>
-</form>
+<div class="container d-flex justify-content-center align-items-center flex-column p-2">
+    <h1 style="text-align: center;"> New Project </h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type='submit' value="save" class="btn btn-block btn-primary"/>
+    </form>
+</div>
 {% endblock %}
