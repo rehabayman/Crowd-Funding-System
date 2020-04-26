@@ -41,7 +41,7 @@ class ProjectDetails(CreateView):
 
         context["total"] = total
 
-        current_user = User.objects.all()[0]
+        current_user = self.request.user
         project_rating = Project.objects.filter(
             id=self.kwargs['id'])[0].project_ratings_set.filter(user=current_user.id)
         rating = 0
@@ -60,7 +60,7 @@ class ProjectDetails(CreateView):
         return context
 
     def post(self, request, id):
-        current_user = User.objects.all()[0]
+        current_user = request.user
 
         total = get_total_donations(id)
         form = UserDonationsModelForm(request.POST)
@@ -224,14 +224,13 @@ def report_project(request,project_id):
 
 
 def edit_project_rating(request, id):
-    # current_user = request.user
-    # if request.user.is_authenticated:
-    #     pass
+    current_user = request.user
+    project = Project.objects.filter(id=id)[0]
+    # if request.user.is_authenticated and current_user.id != project.creator_id:
+        # pass
     # else:
     #     pass
-    current_user = User.objects.all()[0]
     project_rating = Project.objects.filter(id=id)[0].project_ratings_set.filter(user=current_user.id)
-    project = Project.objects.filter(id=id)[0]
     if request.method == "GET":
         rating = 0
         if project_rating.count() != 0:
