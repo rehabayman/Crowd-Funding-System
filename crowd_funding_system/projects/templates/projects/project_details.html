@@ -41,6 +41,7 @@
             <p class="">End Date: {{ project.project.end_date }}</p>
             <p class="">Category: {{ project.project.category.category_name }}</p>
             <p class="">Avg. Rating: {{ project.project.average_rating }}</p>
+            {% if project.project.creator.id != user.id %}
             <form action="{% url 'projects:edit_project_rating' project.project.id %}" method="post" style="display: block;">
                 {% csrf_token %}
                 <fieldset class="rating">
@@ -52,13 +53,14 @@
                 </fieldset>
                 <input type="submit" class="form-control btn btn-dark ml-3" style="display: inline-block; width: 5rem;" value="Rate"/>
             </form>
+            {% endif %}
             {{error}}  
 
             {{message}}
 
             <P>Total donations is: {{total}}</P>
 
-            {% if not Done %}
+            {% if not Done and project.project.creator.id != user.id %}
             <form method="post">{% csrf_token %}
                 {{ form.as_p }}    
                 <input type="submit" class="btn" value="donate">
@@ -68,11 +70,58 @@
             <a  class='rp-btn btn btn-warning' data-form="./{{ project.project.id }}/delete" >Delete</a>
             <div class='modal hide w-50 container'></div>
             {% endif %}
+            {% if project.project.creator.id != user.id %}
             <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
+            {% endif %}
             <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
         </div>
     </div>
+</div>
+
+<div>
+    <div class="col-md-6 comment" style="text-align: center;">  
+        <h2>Comments</h2> 
+        {% for comment in comments %}
+            <table>
+                <tr>
+                    <td><h5>{{comment.comment}}</h5></td>  
+                </tr>
+                <tr>
+                    <td style="margin:20px;">{{comment.created_at}}</td>
+                    <td>created by: {{comment.user.username}}</td>  
+                </tr>
+                <tr>
+                    {% for reply in comment.replies %}
+                    <ul>
+                        {{reply.content}}
+                    </ul>
+                    {% endfor %}
+                </tr>
+                <tr>
+
+                </tr>
+                    <td> </td>
+                    <td> 
+                        <form action="{% url 'projects:add_reply_on_comment' project.project.id comment.id  %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="content">
+                            <input type="submit" class="btn btn-primary" value="Reply">
+                        </form>
+                    </td>
+                
+            </table>
+                
+            
+        {% endfor %}
+       
+        <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="comment">
+            <input type="submit" class="btn btn-primary" value="Comment">
+        </form>
+    </div>
+</div>
 </div>
 
 {% if project.similar_projects%}
@@ -109,7 +158,10 @@
                 <p class="">End Date: {{ project.end_date }}</p>
                 <p class="">Category: {{ project.category.category_name }}</p>
                 <p class="">Avg. Rating: {{ project.average_rating }}</p>
+                
+                {% if project.creator.id != user.id %}
                 <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
+                {% endif %}
                 <div class='modal hide w-50 container'></div>
             </div>
         </div>

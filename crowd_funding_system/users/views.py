@@ -17,6 +17,7 @@ from users.forms import RegisterForm, LoginForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+import uuid
 
 from django.core.files.storage import FileSystemStorage
 
@@ -85,41 +86,45 @@ def logout_user(request):
     logout(request)
     return render(request, "home.html", context)
 
-class ProfileUpdate(LoginRequiredMixin,UpdateView):
+class ProfileUpdate(UpdateView):
     form_class= UserModelForm    
     template_name = 'users/_edit_profile.html'
-
+    
     def get_object(self):
         id_=self.kwargs.get("id")
-        user=User.objects.get(id__exact= id_)         
+        user=User.objects.get(id__exact= id_)            
         if self.request.user == user:       
             return get_object_or_404(User,id=id_)
         raise PermissionDenied()
 
-    def post(self, request,**kwargs):
-        user= User.objects.get(id__exact=kwargs['id']) 
-        profile_pic1= user.profile_pic
-        form= UserModelForm(request.POST, request.FILES)
-
-        if not request.FILES:           
-            form.instance.profile_pic= user.profile_pic
-
-        if request.user != user:
-            return render(request,"home.html")
-
-        if form.is_valid(): 
-            form.instance.id = self.kwargs['id']
-            form.save()                 
-            context = {"form":form, "message": "You have Updated your Profile successfully"}
-            return render(request,self.template_name,context)      
+    # def post(self, request,**kwargs):
+    #     user= User.objects.get(id__exact=kwargs['id']) 
+    #     profile_pic1= user.profile_pic
+    #     form= UserModelForm(request.POST, request.FILES)
         
-        context = {"form":form}
-        return render(request,self.template_name, context)      
+    #     if not request.FILES:           
+    #         form.instance.profile_pic= user.profile_pic
+
+    #     if request.user != user:
+    #         return render(request,"home.html")
+
+    #     if form.is_valid(): 
+    #         # form.instance.id = self.kwargs['id']  
+    #         form.instance.email=user.email                      
+    #         form.save()                 
+    #         context = {"form":form, "message": "You have Updated your Profile successfully"}
+    #         return render(request,self.template_name,context)      
+        
+    #     context = {"form":form}
+    #     return render(request,self.template_name, context)      
         
 
-    def form_valid(self, form):
-        return super().form_valid(form) 
-
+    def form_valid(self, form):       
+        form.save()
+        context = {"form":form, "message": "You have Updated your Profile successfully"}
+        return render(self.request,self.template_name, context)
+        
+    success_url='/'
 
 class UserDelete(LoginRequiredMixin, DeleteView):
     model = User
@@ -156,29 +161,29 @@ def test_home(request):
 
 @login_required
 def show(request, id):
-    # if id == request.user.id:
-    user = User.objects.filter(id=id)[0]
-    context = {"user": user}
-    return render(request, "users/show.html", context)
-    # else:
-        # raise PermissionDenied()
+    if uuid.UUID(id) == request.user.id:
+        user = request.user
+        context = {"user": user}
+        return render(request, "users/show.html", context)
+    else:
+        raise PermissionDenied()
 
 @login_required
 def show_projects(request, id):
-    # if id == request.user.id:
-    user = User.objects.filter(id=id)[0]
-    user_projects = user.project_set.all()
-    context = {"user": user, "user_projects": user_projects}
-    return render(request, "users/show_projects.html", context)
-    # else:
-        # raise PermissionDenied()
+    if uuid.UUID(id) == request.user.id:
+        user = request.user
+        user_projects = user.project_set.all()
+        context = {"user": user, "user_projects": user_projects}
+        return render(request, "users/show_projects.html", context)
+    else:
+        raise PermissionDenied()
 
 @login_required
 def show_donations(request, id):
-    # if id == request.user.id:
-    user = User.objects.filter(id=id)[0]
-    user_donations = user.user_donations_set.all()
-    context = {"user": user, "user_donations": user_donations}
-    return render(request, "users/show_donations.html", context)
-    # else:
-        # raise PermissionDenied()
+    if uuid.UUID(id) == request.user.id:
+        user = request.user
+        user_donations = user.user_donations_set.all()
+        context = {"user": user, "user_donations": user_donations}
+        return render(request, "users/show_donations.html", context)
+    else:
+        raise PermissionDenied()
