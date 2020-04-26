@@ -11,8 +11,8 @@ urlpatterns=[
     path("login/", login_user, name="users_login"),
     path("logout/", logout_user, name="users_logout"),
 
-    path('<id>/edit',ProfileUpdate.as_view() , name="edit_profile_url"),
-    path('<id>/delete',UserDelete.as_view() , name="delete_user_url"),
+    path('edit',ProfileUpdate.as_view() , name="edit_profile_url"),
+    path('delete',UserDelete.as_view() , name="delete_user_url"),
     # this url for testing
     path('/', test_home,name="home"),
     path('<str:id>/projects', show_projects, name="user_projects"),

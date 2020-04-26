@@ -85,38 +85,13 @@ def logout_user(request):
     logout(request)
     return render(request, "home.html", context)
 
-class ProfileUpdate(UpdateView):
+class ProfileUpdate(LoginRequiredMixin,UpdateView):
     form_class= UserModelForm    
     template_name = 'users/_edit_profile.html'
     
     def get_object(self):
-        id_=self.kwargs.get("id")
-        user=User.objects.get(id__exact= id_)            
-        if self.request.user == user:       
-            return get_object_or_404(User,id=id_)
-        raise PermissionDenied()
-
-    # def post(self, request,**kwargs):
-    #     user= User.objects.get(id__exact=kwargs['id']) 
-    #     profile_pic1= user.profile_pic
-    #     form= UserModelForm(request.POST, request.FILES)
-        
-    #     if not request.FILES:           
-    #         form.instance.profile_pic= user.profile_pic
-
-    #     if request.user != user:
-    #         return render(request,"home.html")
-
-    #     if form.is_valid(): 
-    #         # form.instance.id = self.kwargs['id']  
-    #         form.instance.email=user.email                      
-    #         form.save()                 
-    #         context = {"form":form, "message": "You have Updated your Profile successfully"}
-    #         return render(request,self.template_name,context)      
-        
-    #     context = {"form":form}
-    #     return render(request,self.template_name, context)      
-        
+        return get_object_or_404(User,id=self.request.user.id)
+            
 
     def form_valid(self, form):       
         form.save()
@@ -127,27 +102,17 @@ class ProfileUpdate(UpdateView):
 
 class UserDelete(LoginRequiredMixin, DeleteView):
     model = User
-    def get_object(self):        
-        id_=self.kwargs.get("id")
-        user=User.objects.get(id__exact= id_) 
-
-        # if self.request.user == user:       
-        return get_object_or_404(User,id=id_)
-        raise PermissionDenied()
+    def get_object(self):           
+        return get_object_or_404(User,id=self.request.user.id)
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()  
-
-        if self.object == request.user:           
-                self.object.delete()
-                return HttpResponseRedirect(self.get_success_url())           
-        else:            
-            raise PermissionDenied()    
-        
-    success_url = '/' 
+        self.object = self.get_object()        
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())                
+    success_url = '/users/register' 
 
 
-    # will reverse to login page
+    # # will reverse to login page
     # def get_success_url(self):
     #     return reverse.(crowd:login) 
 
