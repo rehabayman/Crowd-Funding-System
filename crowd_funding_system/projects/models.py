@@ -90,6 +90,16 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
+    @property
+    def replies (self):
+        return Comment_Replies.objects.filter(comment_id = self.id)
+
+class Comment_Replies(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.TextField(max_length=500, null=False, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
 
 class Comment_Reports(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

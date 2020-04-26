@@ -10,7 +10,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from .forms import new_project_form, ReportForm, AddProjectRatingForm, UserDonationsModelForm,comment_form
+from .forms import *
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
 
@@ -37,9 +37,8 @@ class ProjectDetails(CreateView):
         user= self.request.user      
         context = super(ProjectDetails, self).get_context_data(*args, **kwargs)
         total_donations = get_total_donations(project_id)
-        p = Project.objects.get(id__exact=project_id)       
-        comments = Comment.objects.filter(project=p.id)        
-        
+        p = Project.objects.get(id__exact=project_id)   
+        comments = Comment.objects.filter(project=p.id)             
 
         if total_donations >= p.total_target:
             context = {"Done": "True", "message": "Project reached the target"}
@@ -105,14 +104,13 @@ class ProjectDetails(CreateView):
                 "form": form, "message": "You have Donated successfully", "total": total}
             context["project"] = project
             context["rating"] = rating
-            context['comments']=comments        
+            context['comments']=comments   
             return render(request, self.template_name, context)
         ## set context ####
         context = {"form": form, "total": total}
         context["project"] = project
         context["rating"] = rating
-        context['comments']=comments      
-
+        context['comments']=comments   
         return render(request, self.template_name, context)
 
 
@@ -166,10 +164,11 @@ def index(request):
         # projects = {"projects": projects, "myFilter": myFilter} #, "TagFilter": projectTagged
     return render(request, "projects/index.html", context)
 
-# @login_required
+@login_required
 def new_project(request):
     form = new_project_form(request.POST or None)
     if form.is_valid():
+        #form.creator = request.user
         form.save()
         return redirect('/projects/')
     context = {
@@ -252,4 +251,20 @@ def add_comment(request,project_id):
     else:
         commentform = comment_form()
     similar_projects = Project.objects.filter(category = target_project.category).exclude(id = target_project.id)[:4]
+    return redirect('projects:project_details', id=project_id)
+
+######## Adding reply on comment ###########
+def add_reply_on_comment(request, project_id, comment_id):
+    replyform = reply_form(request.POST)
+    comment = Comment.objects.get(id=comment_id)
+    if request.method == 'POST':
+        if replyform.is_valid():
+            reply = replyform.save(commit=False)
+            reply.user = request.user
+            reply.comment = comment
+            reply.save()
+            replyform = reply_form()
+            redirect('projects:project_details', project_id)
+        else:
+            replyform = reply_form()
     return redirect('projects:project_details', id=project_id)

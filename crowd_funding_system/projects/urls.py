@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProjectDetails, ProjectDelete,new_project, new_project, edit_project_rating,add_comment
+from .views import *
 from . import views
 
 app_name="projects"
@@ -11,6 +11,7 @@ urlpatterns=[
     path('<id>/delete',ProjectDelete.as_view() , name="project_delete"),
     path('<str:id>/edit', edit_project_rating, name="edit_project_rating"),
     path('<str:project_id>/comment', add_comment, name="add_comment"),
+    path('<str:project_id>/<comment_id>/reply', add_reply_on_comment, name="add_reply_on_comment"),
     # path('<uuid:project_id>', views.project_details, name='project_details'),
     path('', views.index, name='index'),
 ]

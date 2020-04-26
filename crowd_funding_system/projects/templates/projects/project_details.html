@@ -85,13 +85,30 @@
         {% for comment in comments %}
             <table>
                 <tr>
-                <td><h5>{{comment.comment}}</h5></td>  
+                    <td><h5>{{comment.comment}}</h5></td>  
                 </tr>
                 <tr>
-                <td style="margin:20px;">{{comment.created_at}}</td>
-                <td>created by: {{comment.user.first_name}}</td>  
-                
+                    <td style="margin:20px;">{{comment.created_at}}</td>
+                    <td>created by: {{comment.user.username}}</td>  
                 </tr>
+                <tr>
+                    {% for reply in comment.replies %}
+                    <ul>
+                        {{reply.content}}
+                    </ul>
+                    {% endfor %}
+                </tr>
+                <tr>
+
+                </tr>
+                    <td> </td>
+                    <td> 
+                        <form action="{% url 'projects:add_reply_on_comment' project.project.id comment.id  %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="content">
+                            <input type="submit" class="btn btn-primary" value="Reply">
+                        </form>
+                    </td>
                 
             </table>
                 
