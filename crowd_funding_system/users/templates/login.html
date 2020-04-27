@@ -17,6 +17,14 @@
             </div>
         {% endif %}
 
+        {% if messages %}
+            {% for msg in messages%}
+              <div class="alert alert-info" role="alert">
+                {{msg}}
+              </div>
+              {% endfor %}
+        {%endif%}
+
         {% load crispy_forms_tags %}
         <form method="post" class="w-50">
             {% csrf_token %}

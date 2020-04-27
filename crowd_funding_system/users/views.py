@@ -20,22 +20,42 @@ from django.contrib.auth.decorators import login_required
 import uuid
 
 from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
+from django.utils import timezone
+from django.contrib import messages
 
 # Create your views here.
+
 
 
 def register_user(request):
     context = {}
     user_creation_form = RegisterForm()
-
     if( request.method == "POST"):
         uploaded_image = request.FILES["profile_pic"]
         user_creation_form = RegisterForm(request.POST, request.FILES)
         if(user_creation_form.is_valid()):
-            user_creation_form.save()
+            user = user_creation_form.save(commit=False)
+            user.is_active = False
+            
+            user.set_expiration_date()
+            user.set_activation_token()
+            email = user.email
+            token = user.get_activation_token()
+            
+            url_to_activate = "/users/activate/" + token + "/" + str(user.id)
+            message = "Please activate your email with the next url "  + url_to_activate
+            send_mail(
+                'Account activation mail',
+                message,
+                'crowdFunding@example.com',
+                [email],
+                fail_silently=False,
+            )
+            user.save()
             fs = FileSystemStorage()
             fs.save(uploaded_image.name, uploaded_image)
-            context['message'] = "registered succcessfully."
+            context['message'] = "Registered succcessfully, please wait for activation mail to use your account."
             context["form"] = user_creation_form
             return render(request, "register.html", context )
 
@@ -44,6 +64,23 @@ def register_user(request):
     return render(request, "register.html", context )
 
     
+def activate_user(request, active, user_id):
+    context = {}
+    user = User.objects.filter(activation_token=active, id=user_id)
+    now = timezone.now()
+    if user:
+        user = user[0]
+        if user.expiration_date > now:
+            user.is_active = True
+            user.save()
+            messages.success(request, "Account has been activated successfully" )
+            return redirect("/users/login")
+        else:
+            messages.success(request, "Sorry you didn't activate yor account, create another one?." )
+            return redirect("/users/register", context)
+    else: 
+        messages.success(request, "Couldn't find your account, create one?." )
+        return redirect("/users/register")
 
 def login_user(request):
     context = {}
@@ -51,14 +88,9 @@ def login_user(request):
 
         username = request.POST.get("username")
         password = request.POST.get("password")
-        # form = LoginForm(request.POST)
-        # print(form.is_valid())
-        print(username)
-        print(password)
         if( username != "" and len(password) >= 8 ):
             user = authenticate(username=username, password=password)
             if user:
-                print("user is authenticated")
                 if user.is_active:
                     login( request, user)
                     context["message"] = "Logged in successfully"
@@ -67,16 +99,12 @@ def login_user(request):
                     context["message"] = "Your account is not activated yet"
                     return render(request, "login.html", context)
             else:
-                print("user is not authenticated")
-                print( user)
                 context["message"] = "Couldn't find or wrong credentials."
-                # context['form'] = LoginForm
                 return render(request, "login.html", context)
 
         elif(password < 8 ):
             context["message"] = "password is less than 8 characters."
             return render(request, "login.html", context)
-    # context['form'] = LoginForm
     return render(request, "login.html", context)
 
 

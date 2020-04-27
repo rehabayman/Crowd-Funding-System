@@ -16,6 +16,13 @@
             {{message}}
         </div>
       {% endif %}
+      {% if messages %}
+          {% for msg in messages%}
+            <div class="alert alert-info" role="alert">
+              {{msg}}
+            </div>
+            {% endfor %}
+      {%endif%}
     <h2>Register</h2>
         <form method="post" class="w-50" enctype="multipart/form-data">
           {% csrf_token %}
