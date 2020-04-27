@@ -131,14 +131,22 @@ class ProfileUpdate(LoginRequiredMixin,UpdateView):
 
 class UserDelete(LoginRequiredMixin, DeleteView):
     model = User
+    success_url = reverse_lazy("users:users_register") 
     def get_object(self):           
         return get_object_or_404(User,id=self.request.user.id)
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()        
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())                
-    success_url = '/users/register' 
+        password = self.request.POST.get("password")
+        username = self.object.username
+        if( authenticate(username=username, password=password) ):
+            logout(self.request)
+            self.object.delete()
+            messages.success(request, "Account has been deleted successfully" )
+            return HttpResponseRedirect(self.get_success_url())                
+        else:
+            messages.success(request, "Wrong password." )
+            return HttpResponseRedirect("/users/delete")                
 
 
     # # will reverse to login page
