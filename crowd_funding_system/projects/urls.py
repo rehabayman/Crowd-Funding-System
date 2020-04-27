@@ -12,6 +12,8 @@ urlpatterns=[
     path('<str:id>/edit', edit_project_rating, name="edit_project_rating"),
     path('<str:project_id>/comment', add_comment, name="add_comment"),
     path('<str:project_id>/<comment_id>/reply', add_reply_on_comment, name="add_reply_on_comment"),
+    path('report/comment/<uuid:comment_id>',views.report_comment, name='report_comment'),
+    path('comment/<uuid:comment_id>/delete', views.delete_comment , name="comment_delete"),
     # path('<uuid:project_id>', views.project_details, name='project_details'),
     path('', views.index, name='index'),
 ]

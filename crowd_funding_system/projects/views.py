@@ -13,7 +13,7 @@ from .models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
-
+from django.contrib import messages
 
 def get_total_donations(id):
     if User_Donations.objects.filter(project_id=id).aggregate(total=Sum('amount'))['total']:
@@ -269,3 +269,37 @@ def add_reply_on_comment(request, project_id, comment_id):
         else:
             replyform = reply_form()
     return redirect('projects:project_details', id=project_id)
+
+def check_comment_before_report(comment_id,user_id):
+    if Comment_Reports.objects.filter(comment_id=comment_id,user_id=user_id):
+        return False
+    else:
+        return True
+
+@login_required
+def report_comment(request,comment_id):  
+    if request.method.upper() == 'POST': 
+        form = CommentReportForm(request.POST) 
+        if form.is_valid(): 
+            form = form.save(commit=False)
+            form.comment_id = comment_id
+            form.user_id = request.user.id
+            if check_comment_before_report(form.comment_id,form.user_id):
+                form.save()
+                response = JsonResponse({"success": "comment reported successfully"})
+                response.status_code = 200
+                return response
+            else:
+                response = JsonResponse({"error": "Sorry you have already reported this comment !"})
+                response.status_code = 403
+                return response
+    elif request.method.upper() == 'GET':
+        form = CommentReportForm() 
+        return render(request, 'projects/report_project.html', {'form' : form})
+
+@login_required
+def delete_comment(request,comment_id):
+    if Comment.objects.get(id=comment_id).delete():
+        messages.add_message(request, messages.INFO, 'Comment has been deleted')
+    return redirect(request.META['HTTP_REFERER'])
+    
