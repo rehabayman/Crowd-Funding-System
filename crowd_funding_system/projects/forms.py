@@ -52,6 +52,11 @@ class ReportForm(ModelForm):
         model = Project_Reports
         fields = ['report',]
 
+class CommentReportForm(ModelForm):
+    class Meta:
+        model = Comment_Reports
+        fields = ['report',]
+
 class reply_form(ModelForm):
     class Meta:
         model = Comment_Replies

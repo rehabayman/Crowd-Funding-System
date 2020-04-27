@@ -19,6 +19,23 @@ class Project_Reports_Admin(admin.ModelAdmin):
         'project_actions',
     )
 
+@admin.register(Comment_Reports)
+class Comment_Reports_Admin(admin.ModelAdmin):
+    list_display = (
+        'report_id',
+        'user',
+        'comment_content',
+        'report',
+        'comment_actions',
+    )
+    readonly_fields = (
+        'report_id',
+        'user',
+        'comment_content',
+        'report',
+        'comment_actions',
+    )
+
 # admin.site.register(Project)
 @admin.register(Project)
 class Project_Admin(admin.ModelAdmin):

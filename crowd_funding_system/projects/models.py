@@ -83,6 +83,9 @@ class Project_Reports(models.Model):
         url = reverse('projects:project_details', args=(self.project.id,))
         return format_html("<a class='button' href='%s'>View</a> <a class='button' href='%s'>Delete</a>" % (url , (url+"/delete")))
     
+    class Meta:
+        verbose_name = 'Project Report'
+        verbose_name_plural = 'Project Reports'
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -106,3 +109,18 @@ class Comment_Reports(models.Model):
     report = models.TextField(max_length=500, null=False, blank=False)
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    def report_id(self):
+        return self.id
+
+    def comment_content(self):
+        return Comment.objects.get(id=self.comment_id).comment
+
+    def comment_actions(self):
+        url = reverse('projects:project_details', args=(self.comment.project.id,))
+        delete_url = reverse('projects:comment_delete', args=(self.comment.id,))
+        return format_html("<a class='button' href='%s'>View</a> <a class='button' href='%s'>Delete</a>" % (url , (delete_url)))
+    
+    class Meta:
+        verbose_name = 'Comment Report'
+        verbose_name_plural = 'Comment Reports'
