@@ -4,7 +4,16 @@
         Add Project
     {% endblock %}
 {% block my_content %}
-<div class="container d-flex justify-content-center align-items-center flex-column p-2">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'projects/prostyle.css' %}">
+</head>
+<body>
+    <img class="logo" src="{% static  'projects/imgs/565c3813-3745-4ce4-bb2d-bf22f2cffee7_200x200.png' %}">
+    <div class="container d-flex justify-content-center align-items-center flex-column p-2 pro">
     <h1 style="text-align: center;"> New Project </h1>
     <form action="{% url 'projects:new_project' %}" method="POST">
         {% csrf_token %}
@@ -12,4 +21,7 @@
         <input type='submit' value="save" class="btn btn-block btn-primary"/>
     </form>
 </div>
+</body>
+</html>
+
 {% endblock %}

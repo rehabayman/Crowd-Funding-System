@@ -1,0 +1,20 @@
+body{
+    background-image: url('./imgs/bk.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.pro{
+    background-color: rgba(255, 255, 255, 0.938);
+    border-radius: 5%;
+    border: rgba(55, 55, 248, 0.472) 2px solid;
+    margin: auto;
+    margin-top: 0;
+    height: 60rem;
+    width: 40rem;
+    
+}
+
+.logo{
+    margin-left: 65rem;
+    display: inline;
+}
