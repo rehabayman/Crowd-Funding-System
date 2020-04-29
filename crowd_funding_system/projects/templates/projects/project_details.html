@@ -36,7 +36,6 @@
         <div class="">
             <p class="">Created By: {{ project.project.creator.first_name }} {{ project.project.creator.last_name }} </p>
             <p class="">Details: {{ project.project.details }}</p>
-            <p class="">Total Target: {{ project.project.total_target }}</p>
             <p class="">Start Date: {{ project.project.start_date }}</p>
             <p class="">End Date: {{ project.project.end_date }}</p>
             <p class="">Category: {{ project.project.category.category_name }}</p>
@@ -57,24 +56,31 @@
             {{error}}  
 
             {{message}}
-
-            <P>Total donations is: {{total}}</P>
-
-            {% if user.is_authenticated and not Done and project.project.creator.id != user.id %}
-            <form method="post" style="display: block; margin-bottom: 2px;">{% csrf_token %}
-                {{ form.as_p }}    
-                <input type="submit" class="btn" value="Donate">
-            </form>
-            {% endif %}
-            {% if project.project.creator == user %}
+        </div>
+        <div class="mt-3">
+            <div class= "pr-3" style="float:left">Donations: {{ total }} $</div>
+            <div class="progress" style="margin-bottom:0;">
+                <div class="progress-bar progress-bar-striped active progress-bar-animated" role="progressbar"
+                    aria-valuenow="{{ total }}" aria-valuemin="0" aria-valuemax="{{ project.project.total_target }}" style="width:{{ project.project.progress }}%; ">
+                    {{ total }} $ ( {{ project.project.progress }} %)
+                </div>
+            </div> 
+            <div style="float:righ; text-align:right;">Target: {{ project.project.total_target }} $</div>
+        </div>
+        {% if user.is_authenticated and not Done and project.project.creator.id != user.id %}
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}    
+            <input type="submit" class="btn" value="Donate">
+        </form>
+        {% endif %}
+        {% if project.project.creator == user %}
             <a  class='rp-btn btn btn-warning' data-form="./{{ project.project.id }}/delete" >Delete</a>
             <div class='modal hide w-50 container'></div>
-            {% endif %}
-            {% if user.is_authenticated and project.project.creator.id != user.id %}
-            <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" style="width: 80px;" >Report</a>
-            {% endif %}
-            {% if user.is_authenticated %}
-            <div class='modal hide w-50 container'></div>
+        {% endif %}
+        {% if user.is_authenticated and project.project.creator.id != user.id %}
+            <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
+        {% endif %}
+        <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
             {% endif %}
         </div>
@@ -184,6 +190,9 @@
         $(this).next().modal("show");
         });
     });
+</script>
+<script>
+    
 </script>
 
 {% endblock %}

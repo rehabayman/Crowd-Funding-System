@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Avg, Sum
 from django.utils.html import format_html
 from django.urls import reverse
+import math
 
 # Create your models here.
 class Project(models.Model):
@@ -36,6 +37,13 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def progress(self):
+        if self.donations:
+            return math.floor(self.donations / self.total_target * 100)
+        else:
+            return 0
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
