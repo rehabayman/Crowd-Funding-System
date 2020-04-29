@@ -13,8 +13,12 @@
     <li class="navitem"><a class="active" href="{% url 'homepage_index' %}">Home</a></li>
     <li class='navitem'><a href="projects/">All Projects</a></li>
     <li class='navitem'><a href="projects/new">Create a project</a></li>
-    <li class='navitem' style="margin-left: 22rem;"><a href="users/login/">Login</a></li>
-    <li class='navitem'><a href="users/register/">Register</a></li>
+    {% if user.is_authenticated %}
+        <li class='navitem' style="margin-left: 22rem;"><a href="users/logout/">Log out</a></li>
+    {% else %}
+        <li class='navitem' style="margin-left: 22rem;"><a href="users/login/">Login</a></li>
+        <li class='navitem'><a href="users/register/">Register</a></li>
+    {% endif %}
   </ul>
 <h2 class="head_home">Highest Rated Projects</h2>
 <div id="carouselExampleIndicators" class="carousel slide w-75 h-25" data-ride="carousel" style="border: solid; margin-left: 10rem;">

@@ -94,7 +94,10 @@ def login_user(request):
                 if user.is_active:
                     login( request, user)
                     context["message"] = "Logged in successfully"
-                    return render(request, "login.html", context)
+                    if request.GET.get('next'):
+                        return redirect(request.GET.get('next'))
+                    else:
+                        return redirect('homepage_index')                
                 else:
                     context["message"] = "Your account is not activated yet"
                     return render(request, "login.html", context)
@@ -102,7 +105,7 @@ def login_user(request):
                 context["message"] = "Couldn't find or wrong credentials."
                 return render(request, "login.html", context)
 
-        elif(password < 8 ):
+        elif(len(password) < 8 ):
             context["message"] = "password is less than 8 characters."
             return render(request, "login.html", context)
     return render(request, "login.html", context)
@@ -110,9 +113,8 @@ def login_user(request):
 
 
 def logout_user(request):
-    context = {}
     logout(request)
-    return render(request, "home.html", context)
+    return redirect("homepage_index")
 
 class ProfileUpdate(LoginRequiredMixin,UpdateView):
     form_class= UserModelForm    
