@@ -80,14 +80,15 @@
         {% if user.is_authenticated and project.project.creator.id != user.id %}
             <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
         {% endif %}
+        {% if user.is_authenticated %}
         <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
-            {% endif %}
+        {% endif %}
         </div>
     </div>
 
 {% if user.is_authenticated %}
-    <div class="col-md-6 comment p-2">
+    <div class="col-md-6 comment p-2 mt-3" style="margin-left: 12rem;">
         <h2>Comments:</h2>
         <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
             {% csrf_token %}
