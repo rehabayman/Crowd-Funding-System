@@ -38,21 +38,57 @@
     </a>
 </div>
 <h2 class="head_home ml-5 p-2" style="width: 90%;">Latest Projects</h2>
-<ul style="list-style-type: none; width: 92.5%;" class="ml-2">
-    {% for project in latest_projects %}
-        <li>
-            <h5><a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a></h5>
-        </li>
-    {% endfor %}
-</ul>
+<div id="carouselExampleIndicators-2" class="carousel slide w-75 h-25" data-ride="carousel" style="border: solid; margin-left: 10rem;">
+    <ol class="carousel-indicators">
+        {% for project in latest_projects%}
+        <li data-target="#carouselExampleIndicators-2" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
+        {% endfor %}
+    </ol>
+    <div class="carousel-inner">
+        {% for project in latest_projects %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="/media/{{project.images.first.picture}}" class="card-img-top d-block w-100 h-50" alt={{project.title}}>
+            <div class="carousel-caption d-none d-md-block">
+                <h3 style="color: black;">
+                    <a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a>
+                </h3>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators-2" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" style="background-color: black;"></span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators-2" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" style="background-color: black;"></span>
+    </a>
+</div>
 
 <h2 class="head_home ml-5 p-2" style="width: 90%;">Featured Projects</h2>
-<ul style="list-style-type: none; width: 92.5%;" class="ml-2">
-    {% for project in featured_projects %}
-        <li>
-            <h5><a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a></h5>
-        </li>
-    {% endfor %}
-</ul>
+<div id="carouselExampleIndicators-3" class="carousel slide w-75 h-25" data-ride="carousel" style="border: solid; margin-left: 10rem;">
+    <ol class="carousel-indicators">
+        {% for project in featured_projects%}
+        <li data-target="#carouselExampleIndicators-3" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
+        {% endfor %}
+    </ol>
+    <div class="carousel-inner">
+        {% for project in featured_projects %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="/media/{{project.images.first.picture}}" class="card-img-top d-block w-100 h-50" alt={{project.title}}>
+            <div class="carousel-caption d-none d-md-block">
+                <h3 style="color: black;">
+                    <a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a>
+                </h3>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators-3" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" style="background-color: black;"></span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators-3" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" style="background-color: black;"></span>
+    </a>
+</div>
 
 {% endblock %}
