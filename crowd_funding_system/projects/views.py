@@ -166,16 +166,29 @@ def index(request):
 
 @login_required
 def new_project(request):
-    form = new_project_form(request.POST)
-    if form.is_valid():
-        projform = form.save(commit=False)
-        projform.creator = request.user
-        projform.save()
-        return redirect('/projects/')
-    context = {
-        'form': form
-    }
-    return render (request, "projects/new_project.html", context)
+    if request.method == 'POST':
+        form = new_project_form(request.POST)
+        image_form = NewProjectPicturesForm(request.POST, request.FILES)
+        if form.is_valid() and image_form.is_valid():
+            projform = form.save(commit=False)
+            projform.creator = request.user
+            projform.save()
+            pictures = request.FILES.getlist('picture')
+            for pic in pictures:
+                photo = Project_Pictures(project=projform, picture=pic)
+                photo.save()
+
+            return HttpResponseRedirect('/projects/')
+    else:
+        form = new_project_form()
+        image_form = NewProjectPicturesForm()
+        context = {
+            'form': form,
+            'image_form': image_form
+        }
+
+        return render (request, "projects/new_project.html", context)
+
 
 def check_before_report(project_id,user_id):
     if Project_Reports.objects.filter(project_id=project_id,user_id=user_id):

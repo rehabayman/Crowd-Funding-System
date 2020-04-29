@@ -1,26 +1,17 @@
 {% extends 'crowd_funding_system/base.html' %}
+{% load static %}
         
     {% block title %}
         Homepage
     {% endblock %}
 
 {% block my_content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'users/home.css' %}">
-<ul class="navbar">
-    <li><img style="margin-left: 0;" class="logo" style="margin-left: 45rem;" src="{% static 'users/imgs/logo.png' %}">
-    </li>
-    <li class="navitem"><a class="active" href="{% url 'homepage_index' %}">Home</a></li>
-    <li class='navitem'><a href="projects/">All Projects</a></li>
-    <li class='navitem'><a href="projects/new">Create a project</a></li>
-    {% if user.is_authenticated %}
-        <li class='navitem' style="margin-left: 22rem;"><a href="users/logout/">Log out</a></li>
-    {% else %}
-        <li class='navitem' style="margin-left: 22rem;"><a href="users/login/">Login</a></li>
-        <li class='navitem'><a href="users/register/">Register</a></li>
-    {% endif %}
-  </ul>
-<h2 class="head_home">Highest Rated Projects</h2>
+
+{% block extra_style %}
+    <link rel="stylesheet" href="{% static 'users/home.css' %}">
+{% endblock %}
+
+<h2 class="head_home ml-5 p-2" style="width: 90%;">Highest Rated Projects</h2>
 <div id="carouselExampleIndicators" class="carousel slide w-75 h-25" data-ride="carousel" style="border: solid; margin-left: 10rem;">
     <ol class="carousel-indicators">
         {% for project in highest_rated_projects%}
@@ -46,8 +37,8 @@
         <span class="carousel-control-next-icon" style="background-color: black;"></span>
     </a>
 </div>
-<h2 class="head_home">Latest Projects</h2>
-<ul style="list-style-type: none;">
+<h2 class="head_home ml-5 p-2" style="width: 90%;">Latest Projects</h2>
+<ul style="list-style-type: none; width: 92.5%;" class="ml-2">
     {% for project in latest_projects %}
         <li>
             <h5><a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a></h5>
@@ -55,10 +46,12 @@
     {% endfor %}
 </ul>
 
-<h2 class="head_home">Featured Projects</h2>
-<ul style="list-style-type: none;">
+<h2 class="head_home ml-5 p-2" style="width: 90%;">Featured Projects</h2>
+<ul style="list-style-type: none; width: 92.5%;" class="ml-2">
     {% for project in featured_projects %}
-        <h5><a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a></h5>
+        <li>
+            <h5><a href="projects/{{project.id}}" style="text-decoration: none;">{{project.title}}</a></h5>
+        </li>
     {% endfor %}
 </ul>
 
