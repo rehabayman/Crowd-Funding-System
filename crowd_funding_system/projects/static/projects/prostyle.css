@@ -44,10 +44,9 @@ body{
       display: none;
   }
 
-  .comment{
-      background-color: rgba(221, 217, 217, 0.719);
-      margin: 2rem;
-      margin-left: 4rem;
+  .comment {
+      background-color: rgba(221, 217, 217, 0.719);    
+      margin-top: 10px;
   }
   .rep{
       margin-top: 1rem;
