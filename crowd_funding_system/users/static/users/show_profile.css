@@ -23,11 +23,11 @@
 }
 
 .img-container {
-    background: #C39797;
     height: 260px;
     width: 260px;
     margin-top: 5rem;
     overflow: hidden;
+    border-radius: 50%;
 }
 .img-container img {
     width: 260px;

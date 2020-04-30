@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from .views import register_user, login_user, logout_user, activate_user
 from .views import ProfileUpdate, UserDelete, test_home, show, show_projects, show_donations
 from django.urls import path, reverse_lazy
+from django.conf import settings
 
 app_name="users"
 urlpatterns=[
@@ -23,7 +24,8 @@ urlpatterns=[
         template_name= './users/password_reset_form.html', 
         success_url=reverse_lazy('users:password_reset_done'), 
         subject_template_name='./users/password_reset_subject.txt', 
-        email_template_name="./users/password_reset_email.html"),
+        email_template_name="./users/password_reset_email.html",
+        extra_email_context= { 'c_url': getattr(settings, 'CURRENT_DOMAIN_NAME', None) } ),
         name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
         template_name= './users/password_reset_done.html'), 
