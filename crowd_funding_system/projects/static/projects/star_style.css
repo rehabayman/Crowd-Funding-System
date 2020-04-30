@@ -24,6 +24,7 @@
    float: right; 
   }
   
+  input[type="text"]{ padding: 20px 10px; line-height: 28px; }
   /***** CSS Magic to Highlight Stars on Hover *****/
   
   .rating > input:checked ~ label, /* show gold star when clicked */

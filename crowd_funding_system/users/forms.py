@@ -9,7 +9,7 @@ from django.forms import ModelForm
 class UserModelForm(forms.ModelForm):   
     class Meta:
         model=User
-        exclude=['username','email','date_joined','is_active','is_superuser','is_staff','is_active','groups','user_permissions','password','last_login']
+        exclude=['username','email','date_joined','is_active','is_superuser','is_staff','is_active','groups','user_permissions','password','last_login', "activation_token", "expiration_date"]
     def __init__(self, *args, **kwargs):
         super(UserModelForm, self).__init__(*args, **kwargs)
         self.fields['profile_pic'].required = False   
@@ -20,7 +20,7 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         # password = forms.CharField(widget=forms.PasswordInput)
-        fields = [ "username", "first_name", "last_name", "phone", "email", "password1", "password2"]
+        fields = [ "username", "first_name", "last_name", "phone", "email", "profile_pic", "password1", "password2"]
         # widgets = {
         #     "password": forms.PasswordInput()
         # }

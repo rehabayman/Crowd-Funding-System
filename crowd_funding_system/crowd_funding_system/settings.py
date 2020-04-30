@@ -41,7 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters'
+    'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'django.contrib.sites',
+
 ]
 
 MIDDLEWARE = [
@@ -155,3 +161,27 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'crowd.funding.py.project@gmail.com'
 EMAIL_HOST_PASSWORD = 'cf123456789'
 EMAIL_USE_TLS = True
+
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL= '/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'APP': {
+            'client_id':'3050982914938543',
+            'secret':'414a0a05952ad6e2e48b585273056361',
+            'key': ''
+        }
+    }
+}
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True

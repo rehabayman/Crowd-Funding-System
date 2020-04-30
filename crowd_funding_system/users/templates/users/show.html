@@ -1,4 +1,4 @@
-{% extends 'users/base.html' %}
+{% extends 'projects/base.html' %}
 {% load static %}
 
 {% block title %}
@@ -8,18 +8,42 @@
 {% block extra_style %}
 <link rel="stylesheet" href="{% static 'users/show_profile.css' %}" type="text/css">
 {% endblock %}
-{% block my_content %}
 
-<div class="left-container">
+{% block my_content %}
+<ul class="navbar" style="display: flex;">
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+        <li><img style="margin-left: 0;" class="logo" style="margin-left: 45rem;" src="{% static 'users/imgs/logo.png' %}">
+        </li>
+        <li class="navitem ml-2"><a href="{% url 'homepage_index' %}">Home</a></li>
+    {% if user.is_authenticated %}
+            <li class='navitem ml-2'><a  href="/projects/">All Projects</a></li>
+            <li class='navitem ml-2'><a  href="/projects/new">Create a project</a></li>
+    </div>
+    {% endif %}
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-right: 10px;">
+        {% if user.is_authenticated %}
+            <li class='navitem' ><a  href="/users/donations">My Donations</a></li>
+            <li class='navitem' ><a class="active" href="/users/projects">My Projects</a></li>
+            <li class='navitem' ><a href="/users/show">My Profile</a></li>
+            <li class='navitem' ><a href="/users/logout/">Log out</a></li>
+        {% else %}
+            <li class='navitem'><a href="/users/login/">Login</a></li>
+            <li class='navitem'><a href="/users/register/">Register</a></li>
+        {% endif %}
+    </div>
+  </ul>
+  <div class="body">
+<div class="left-container show">
     <div class="img-container">
         <img src="{% if user.profile_pic != '' %} {{user.profile_pic.url}} {% endif %}"
             alt="{{user.first_name}}'s Profile Pic">
     </div>
-    <h2>{{user.first_name}} {{user.last_name}}</h2>
+    <h2 class="mt-3">{{user.first_name}} {{user.last_name}}</h2>
 </div>
 <div class="main-container">
 
-    <div class="info-container">
+    <div class="info-container show" style="height: 25rem;">
         <h4>Email: {{user.email}}</h4>
 
         <h4>Phone:
@@ -45,9 +69,11 @@
             Not Provided
             {% endif %}
         </h4>
-        <a href="{{user.id}}/edit" class="btn btn-primary" style="width: fit-content;">Edit Profile</a>
+        <a href="edit" class="btn btn-primary" style="width: fit-content;">Edit Profile</a>
+        <a href="projects" class="btn btn-primary mt-2" style="width: fit-content;">My Projects</a>
+        <a href="donations" class="btn btn-primary mt-2" style="width: fit-content;">My Donations</a>
     </div>
-
+</div>
 </div>
 
 {% endblock%}

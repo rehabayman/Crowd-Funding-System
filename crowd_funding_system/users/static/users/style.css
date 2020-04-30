@@ -1,0 +1,29 @@
+body{
+    background-image: url('./imgs/loginbk.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.logdiv{
+    background-color: rgba(255, 255, 255, 0.938);
+    margin-left: 3rem;
+    width: 27rem;
+    height: 30rem;
+    border-radius: 5%;
+    border: rgba(55, 55, 248, 0.472) 2px solid;
+}
+.regdiv{
+    height: 80rem;
+    width: 50rem;
+    margin-left: 2rem;
+    margin-top: 0;
+}
+.logo{
+    margin-left: 4.5rem;
+    display: inline;
+}
+.reg{
+    display: inline;
+    color:white;
+    margin:0;
+    margin-left: 6rem;   
+}

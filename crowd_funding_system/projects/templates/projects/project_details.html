@@ -5,18 +5,43 @@
     {% endblock %}
 
     {% block extra_style %}
-        <script src="https://kit.fontawesome.com/ff27dc7c39.js" crossorigin="anonymous"></script>
+        <script src="{% static 'projects/fontawesome/ff27dc7c39.js' %}"></script>
         <link rel="stylesheet" href="{% static 'projects/star_style.css' %}" type="text/css">
     {% endblock %}
 
 {% block my_content %}
+<ul class="navbar" style="display: flex;">
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+        <li><img style="margin-left: 0;" class="logo" style="margin-left: 45rem;" src="{% static 'users/imgs/logo.png' %}">
+        </li>
+        <li class="navitem ml-2"><a href="{% url 'homepage_index' %}">Home</a></li>
+    {% if user.is_authenticated %}
+            <li class='navitem ml-2'><a  href="/projects/">All Projects</a></li>
+            <li class='navitem ml-2'><a  href="/projects/new">Create a project</a></li>
+    </div>
+    {% endif %}
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-right: 10px;">
+        {% if user.is_authenticated %}
+            <li class='navitem' ><a  href="/users/donations">My Donations</a></li>
+            <li class='navitem' ><a href="/users/projects">My Projects</a></li>
+            <li class='navitem' ><a href="/users/show">My Profile</a></li>
+            <li class='navitem' ><a href="/users/logout/">Log out</a></li>
+        {% else %}
+            <li class='navitem'><a href="/users/login/">Login</a></li>
+            <li class='navitem'><a href="/users/register/">Register</a></li>
+        {% endif %}
+    </div>
+  </ul>
+
+<div class="center">
 <div class='container'>
     <div class=" mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
-        <h5 class="">{{project.project.title}}</h5>
-        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <h3 style="color:rgb(11, 11, 87)"><strong>{{project.project.title}}</strong> </h3>
+        <div id="carouselExampleIndicators{{project.project.id}}" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 {% for project_image in project.project.images %}
-                <li data-target="#carouselExampleIndicators" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
+                <li data-target="#carouselExampleIndicators{{project.project.id}}" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
                 {% endfor %}
             </ol>
             <div class="carousel-inner">
@@ -26,23 +51,22 @@
                 </div>
                 {% endfor %}
             </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <a class="carousel-control-prev" href="#carouselExampleIndicators{{project.project.id}}" role="button" data-slide="prev">
                 <span class="carousel-control-prev-icon" ></span>
             </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <a class="carousel-control-next" href="#carouselExampleIndicators{{project.project.id}}" role="button" data-slide="next">
                 <span class="carousel-control-next-icon" ></span>
             </a>
         </div>
         <div class="">
-            <p class="">Created By: {{ project.project.creator.first_name }} {{ project.project.creator.last_name }} </p>
-            <p class="">Details: {{ project.project.details }}</p>
-            <p class="">Total Target: {{ project.project.total_target }}</p>
-            <p class="">Start Date: {{ project.project.start_date }}</p>
-            <p class="">End Date: {{ project.project.end_date }}</p>
-            <p class="">Category: {{ project.project.category.category_name }}</p>
-            <p class="">Avg. Rating: {{ project.project.average_rating }}</p>
-            {% if project.project.creator.id != user.id %}
-            <form action="{% url 'projects:edit_project_rating' project.project.id %}" method="post" style="display: block;">
+            <p class=""> <strong style="color:blue">Created By:</strong>   {{ project.project.creator.first_name }} {{ project.project.creator.last_name }} </p>
+            <p class=""><strong style="color:blue">Details:</strong>  {{ project.project.details }}</p>
+            <p class=""><strong style="color:blue" >Start Date:</strong>  {{ project.project.start_date }}</p>
+            <p class=""><strong style="color:blue" >End Date:</strong>  {{ project.project.end_date }}</p>
+            <p class=""><strong style="color:blue" >Category:</strong>  {{ project.project.category.category_name }}</p>
+            <p class=""><strong style="color:blue" >Avg. Rating:</strong>  {{ project.project.average_rating }}</p>
+            {% if user.is_authenticated and project.project.creator.id != user.id %}
+            <form action="{% url 'projects:edit_project_rating' project.project.id %}" method="post" style="display: inline-block;">
                 {% csrf_token %}
                 <fieldset class="rating">
                     <input type="radio" id="star5" name="rating" value="5" {% if rating == 5 %} checked {% endif %} /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
@@ -57,83 +81,97 @@
             {{error}}  
 
             {{message}}
-
-            <P>Total donations is: {{total}}</P>
-
-            {% if not Done and project.project.creator.id != user.id %}
-            <form method="post">{% csrf_token %}
-                {{ form.as_p }}    
-                <input type="submit" class="btn" value="donate">
-            </form>
-            {% endif %}
-            {% if project.project.creator == user %}
+        </div>
+        <div class="mt-3">
+            <div class= "pr-3" style="float:left">Donations: {{ total }} $</div>
+            <div class="progress" style="margin-bottom:0;">
+                <div class="progress-bar progress-bar-striped active progress-bar-animated" role="progressbar"
+                    aria-valuenow="{{ total }}" aria-valuemin="0" aria-valuemax="{{ project.project.total_target }}" style="width:{{ project.project.progress }}%; ">
+                    {{ total }} $ ( {{ project.project.progress }} %)
+                </div>
+            </div> 
+            <div style="float:righ; text-align:right;">Target: {{ project.project.total_target }} $</div>
+        </div>
+        {% if user.is_authenticated and not Done and project.project.creator.id != user.id %}
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}    
+            <input type="submit" class="btn" value="Donate">
+        </form>
+        {% endif %}
+        {% if project.project.creator == user %}
             <a  class='rp-btn btn btn-warning' data-form="./{{ project.project.id }}/delete" >Delete</a>
             <div class='modal hide w-50 container'></div>
-            {% endif %}
-            {% if project.project.creator.id != user.id %}
+        {% endif %}
+        {% if user.is_authenticated and project.project.creator.id != user.id %}
             <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.project.id }}" >Report</a>
-            {% endif %}
-            <div class='modal hide w-50 container'></div>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <div class='modal hide w-50 container'></div>
             <a href="{% url 'projects:index'%}" class="btn btn-primary mt-2" style="display: block; width: fit-content;">Back to all projects</a>
+        {% endif %}
         </div>
     </div>
-</div>
-
-<div>
-    <div class="col-md-6 comment" style="text-align: center;">  
-        <h2>Comments</h2> 
-        {% for comment in comments %}
-            <table>
-                <tr>
-                    <td><h5>{{comment.comment}}</h5></td>  
-                </tr>
-                <tr>
-                    <td style="margin:20px;">{{comment.created_at}}</td>
-                    <td>created by: {{comment.user.username}}</td>  
-                </tr>
-                <tr>
-                    {% for reply in comment.replies %}
-                    <ul>
-                        {{reply.content}}
-                    </ul>
-                    {% endfor %}
-                </tr>
-                <tr>
-
-                </tr>
-                    <td> </td>
-                    <td> 
-                        <form action="{% url 'projects:add_reply_on_comment' project.project.id comment.id  %}" method="post">
-                            {% csrf_token %}
-                            <input type="text" name="content">
-                            <input type="submit" class="btn btn-primary" value="Reply">
-                        </form>
-                    </td>
-                
-            </table>
-                
+    {% if user.is_authenticated %}   
+        <div class="col-md-6 comment p-2 com container">  
+            {% for comment in comments %}
+            <div class="media container mx-auto border border-info rounded bg-light p-3 comment">
+                <div class="media-left media-top">
+                    <img src="/media/{{comment.user.profile_pic}}" class="media-object" style="width:40px; margin-right: 1rem;">
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{comment.user.username}}</h4>
+                    <p>{{comment.comment}}</p>
+                    <h6>{{comment.created_at}}</h6>
+                    <a class="toreply btn btn-primary" id="replybtn"> Reply </a>
+                <form id="replypanel" action="{% url 'projects:add_reply_on_comment' project.project.id comment.id  %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="content" required='true' placeholder="Write your reply...">
+                    <input type="submit" class="btn btn-primary" value="Reply">
+                </form>
             
-        {% endfor %}
-       
-        <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="comment">
-            <input type="submit" class="btn btn-primary" value="Comment">
-        </form>
-    </div>
-</div>
+                    {% if comment.user_id != user.id %}
+                        <a  class='rp-btn btn btn-warning' data-form="./report/comment/{{ comment.id }}" >Report</a>
+                        <div class='modal hide w-50 container'></div>
+                    {% else %}
+                        <a class='btn btn-warning' href="./comment/{{ comment.id }}/delete"
+                        onclick="return confirm('are you sure you want to delete this comment?')">Delete</a>
+                    {% endif %}    
+            
+                    <div class="rep">
+                        {% for reply in comment.replies %}
+                            <div class="media-left media-top">
+                                <img src="/media/{{reply.user.profile_pic}}" class="media-object" style="width:40px; margin-right: 1rem;">
+                                <h6 class="media-heading" style="display: inline;"><strong>{{reply.user.username}}</strong></h6>
+                            </div>
+                            <div style="margin-left: 4rem;" class="media-body">
+                                <p>{{reply.content}}</p>
+                                <p>{{comment.created_at}}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+                {% endfor %}
+            <form action="{% url 'projects:add_comment' project.project.id %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="comment" placeholder="Write Your Comment..." required='true'>
+                <input type="submit" class="btn btn-primary" value="Comment">
+            </form>
+        </div>
+        </div>
+    {% endif %}
 </div>
 
 {% if project.similar_projects%}
 <div class='container'>
-<h2 class='mt-5'>Similar Projects:</h2>
+<h2 class='mt-5 head_home'>Similar Projects:</h2>
     {% for project in project.similar_projects %}
         <div class="mx-auto border border-info rounded bg-light p-3" style="width: 70rem;margin-top: 50px;">
             <a href="{% url 'projects:project_details' project.id%}"><h5 class="card-title">{{project.title}}</h5></a>
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div id="carouselExampleIndicators{{project.id}}" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {% for project_image in project.images %}
-                    <li data-target="#carouselExampleIndicators" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
+                    <li data-target="#carouselExampleIndicators{{project.id}}" data-slide-to=`{{ forloop.counter0 }}` {% if forloop.first %}class='active'{% endif %}></li>
                     {% endfor %}
                 </ol>
                 <div class="carousel-inner">
@@ -143,23 +181,23 @@
                     </div>
                     {% endfor %}
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <a class="carousel-control-prev" href="#carouselExampleIndicators{{project.id}}" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" ></span>
                 </a>
-                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <a class="carousel-control-next" href="#carouselExampleIndicators{{project.id}}" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" ></span>
                 </a>
             </div>
             <div class="">
-                <p class="">Created By: {{ project.creator.first_name }} {{ project.creator.last_name }} </p>
-                <p class="">Details: {{ project.details }}</p>
-                <p class="">Total Target: {{ project.total_target }}</p>
-                <p class="">Start Date: {{ project.start_date }}</p>
-                <p class="">End Date: {{ project.end_date }}</p>
-                <p class="">Category: {{ project.category.category_name }}</p>
-                <p class="">Avg. Rating: {{ project.average_rating }}</p>
+                <p class=""> <strong>Created By:</strong>  {{ project.creator.first_name }} {{ project.creator.last_name }} </p>
+                <p class=""> <strong>Details:</strong>  {{ project.details }}</p>
+                <p class=""><strong>Target:</strong>  {{ project.total_target }}</p>
+                <p class=""><strong>Start Date:</strong> {{ project.start_date }}</p>
+                <p class=""><strong>End Date:</strong>  {{ project.end_date }}</p>
+                <p class=""><strong>Category</strong> {{ project.category.category_name }}</p>
+                <p class=""><strong>AVG Rating:</strong> {{ project.average_rating }}</p>
                 
-                {% if project.creator.id != user.id %}
+                {% if user.is_authenticated and project.creator.id != user.id %}
                 <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
                 {% endif %}
                 <div class='modal hide w-50 container'></div>
@@ -175,6 +213,11 @@
         $(this).next().load($(this).data('form'), () => {
         $(this).next().modal("show");
         });
+    });
+
+    $(".toreply").click(function(){
+        $(this).next().show();
+        $(this).hide();
     });
 </script>
 

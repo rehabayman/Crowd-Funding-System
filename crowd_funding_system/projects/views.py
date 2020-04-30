@@ -13,7 +13,7 @@ from .models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from .filters import ProjectFilter
-
+from django.contrib import messages
 
 def get_total_donations(id):
     if User_Donations.objects.filter(project_id=id).aggregate(total=Sum('amount'))['total']:
@@ -166,15 +166,29 @@ def index(request):
 
 @login_required
 def new_project(request):
-    form = new_project_form(request.POST or None)
-    if form.is_valid():
-        #form.creator = request.user
-        form.save()
-        return redirect('/projects/')
-    context = {
-        'form': form
-    }
-    return render (request, "projects/new_project.html", context)
+    if request.method == 'POST':
+        form = new_project_form(request.POST)
+        image_form = NewProjectPicturesForm(request.POST, request.FILES)
+        if form.is_valid() and image_form.is_valid():
+            projform = form.save(commit=False)
+            projform.creator = request.user
+            projform.save()
+            pictures = request.FILES.getlist('picture')
+            for pic in pictures:
+                photo = Project_Pictures(project=projform, picture=pic)
+                photo.save()
+
+            return HttpResponseRedirect('/projects/')
+    else:
+        form = new_project_form()
+        image_form = NewProjectPicturesForm()
+        context = {
+            'form': form,
+            'image_form': image_form
+        }
+
+        return render (request, "projects/new_project.html", context)
+
 
 def check_before_report(project_id,user_id):
     if Project_Reports.objects.filter(project_id=project_id,user_id=user_id):
@@ -268,3 +282,37 @@ def add_reply_on_comment(request, project_id, comment_id):
         else:
             replyform = reply_form()
     return redirect('projects:project_details', id=project_id)
+
+def check_comment_before_report(comment_id,user_id):
+    if Comment_Reports.objects.filter(comment_id=comment_id,user_id=user_id):
+        return False
+    else:
+        return True
+
+@login_required
+def report_comment(request,comment_id):  
+    if request.method.upper() == 'POST': 
+        form = CommentReportForm(request.POST) 
+        if form.is_valid(): 
+            form = form.save(commit=False)
+            form.comment_id = comment_id
+            form.user_id = request.user.id
+            if check_comment_before_report(form.comment_id,form.user_id):
+                form.save()
+                response = JsonResponse({"success": "comment reported successfully"})
+                response.status_code = 200
+                return response
+            else:
+                response = JsonResponse({"error": "Sorry you have already reported this comment !"})
+                response.status_code = 403
+                return response
+    elif request.method.upper() == 'GET':
+        form = CommentReportForm() 
+        return render(request, 'projects/report_project.html', {'form' : form})
+
+@login_required
+def delete_comment(request,comment_id):
+    if Comment.objects.get(id=comment_id).delete():
+        messages.add_message(request, messages.INFO, 'Comment has been deleted')
+    return redirect(request.META['HTTP_REFERER'])
+    

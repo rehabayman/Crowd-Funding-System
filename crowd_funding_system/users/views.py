@@ -19,22 +19,43 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 import uuid
 
+from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
+from django.utils import timezone
+from django.contrib import messages
 
 # Create your views here.
+
 
 
 def register_user(request):
     context = {}
     user_creation_form = RegisterForm()
-
     if( request.method == "POST"):
-        print("post request god damn")
-        user_creation_form = RegisterForm(request.POST)
+        uploaded_image = request.FILES["profile_pic"]
+        user_creation_form = RegisterForm(request.POST, request.FILES)
         if(user_creation_form.is_valid()):
-            print( "form is valid and probabbly will be saved")
-            # print(UserCreationForm.is_active)
-            user_creation_form.save()
-            context['message'] = "registered succcessfully."
+            user = user_creation_form.save(commit=False)
+            user.is_active = False
+            
+            user.set_expiration_date()
+            user.set_activation_token()
+            email = user.email
+            token = user.get_activation_token()
+            
+            url_to_activate = "/users/activate/" + token + "/" + str(user.id)
+            message = "Please activate your email with the next url "  + url_to_activate
+            send_mail(
+                'Account activation mail',
+                message,
+                'crowdFunding@example.com',
+                [email],
+                fail_silently=False,
+            )
+            user.save()
+            fs = FileSystemStorage()
+            fs.save(uploaded_image.name, uploaded_image)
+            context['message'] = "Registered succcessfully, please wait for activation mail to use your account."
             context["form"] = user_creation_form
             return render(request, "register.html", context )
 
@@ -43,6 +64,23 @@ def register_user(request):
     return render(request, "register.html", context )
 
     
+def activate_user(request, active, user_id):
+    context = {}
+    user = User.objects.filter(activation_token=active, id=user_id)
+    now = timezone.now()
+    if user:
+        user = user[0]
+        if user.expiration_date > now:
+            user.is_active = True
+            user.save()
+            messages.success(request, "Account has been activated successfully" )
+            return redirect("/users/login")
+        else:
+            messages.success(request, "Sorry you didn't activate yor account, create another one?." )
+            return redirect("/users/register", context)
+    else: 
+        messages.success(request, "Couldn't find your account, create one?." )
+        return redirect("/users/register")
 
 def login_user(request):
     context = {}
@@ -50,40 +88,33 @@ def login_user(request):
 
         username = request.POST.get("username")
         password = request.POST.get("password")
-        # form = LoginForm(request.POST)
-        # print(form.is_valid())
-        print(username)
-        print(password)
         if( username != "" and len(password) >= 8 ):
             user = authenticate(username=username, password=password)
             if user:
-                print("user is authenticated")
                 if user.is_active:
                     login( request, user)
                     context["message"] = "Logged in successfully"
-                    return render(request, "login.html", context)
+                    if request.GET.get('next'):
+                        return redirect(request.GET.get('next'))
+                    else:
+                        return redirect('homepage_index')                
                 else:
                     context["message"] = "Your account is not activated yet"
                     return render(request, "login.html", context)
             else:
-                print("user is not authenticated")
-                print( user)
                 context["message"] = "Couldn't find or wrong credentials."
-                # context['form'] = LoginForm
                 return render(request, "login.html", context)
 
-        elif(password < 8 ):
+        elif(len(password) < 8 ):
             context["message"] = "password is less than 8 characters."
             return render(request, "login.html", context)
-    # context['form'] = LoginForm
     return render(request, "login.html", context)
 
 
 
 def logout_user(request):
-    context = {}
     logout(request)
-    return render(request, "home.html", context)
+    return redirect("homepage_index")
 
 class ProfileUpdate(LoginRequiredMixin,UpdateView):
     form_class= UserModelForm    
@@ -102,14 +133,22 @@ class ProfileUpdate(LoginRequiredMixin,UpdateView):
 
 class UserDelete(LoginRequiredMixin, DeleteView):
     model = User
+    success_url = reverse_lazy("users:users_register") 
     def get_object(self):           
         return get_object_or_404(User,id=self.request.user.id)
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()        
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())                
-    success_url = '/users/register' 
+        password = self.request.POST.get("password")
+        username = self.object.username
+        if( authenticate(username=username, password=password) ):
+            logout(self.request)
+            self.object.delete()
+            messages.success(request, "Account has been deleted successfully" )
+            return HttpResponseRedirect(self.get_success_url())                
+        else:
+            messages.success(request, "Wrong password." )
+            return HttpResponseRedirect("/users/delete")                
 
 
     # # will reverse to login page
@@ -124,30 +163,21 @@ def test_home(request):
 
 
 @login_required
-def show(request, id):
-    if uuid.UUID(id) == request.user.id:
-        user = request.user
-        context = {"user": user}
-        return render(request, "users/show.html", context)
-    else:
-        raise PermissionDenied()
+def show(request):
+    user = request.user
+    context = {"user": user}
+    return render(request, "users/show.html", context)
 
 @login_required
-def show_projects(request, id):
-    if uuid.UUID(id) == request.user.id:
-        user = request.user
-        user_projects = user.project_set.all()
-        context = {"user": user, "user_projects": user_projects}
-        return render(request, "users/show_projects.html", context)
-    else:
-        raise PermissionDenied()
+def show_projects(request):
+    user = request.user
+    user_projects = user.project_set.all()
+    context = {"user": user, "user_projects": user_projects}
+    return render(request, "users/show_projects.html", context)
 
 @login_required
-def show_donations(request, id):
-    if uuid.UUID(id) == request.user.id:
-        user = request.user
-        user_donations = user.user_donations_set.all()
-        context = {"user": user, "user_donations": user_donations}
-        return render(request, "users/show_donations.html", context)
-    else:
-        raise PermissionDenied()
+def show_donations(request):
+    user = request.user
+    user_donations = user.user_donations_set.all()
+    context = {"user": user, "user_donations": user_donations}
+    return render(request, "users/show_donations.html", context)

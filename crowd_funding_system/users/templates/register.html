@@ -1,23 +1,35 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign up</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{% static 'projects/bootstrap/css/bootstrap.min.css' %}">
+  <script src="{% static 'projects/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'projects/jquery/popper.min.js' %}"></script>
+  <script src="{% static 'projects/bootstrap/js/bootstrap.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'users/style.css' %}">
 </head>
 <body>
+  <img class="logo" style="margin-left: 3.5rem;" src="{% static 'users/imgs/565c3813-3745-4ce4-bb2d-bf22f2cffee7_200x200.png' %}">
   {% load crispy_forms_tags %}
     {% block content %}
-    <div class="container d-flex justify-content-center align-items-center flex-column p-2">
+    <div class="container d-flex justify-content-center align-items-center flex-column p-2 logdiv regdiv ">
       {% if message %}
         <div class="alert alert-info" role="alert">
             {{message}}
         </div>
       {% endif %}
+      {% if messages %}
+          {% for msg in messages%}
+            <div class="alert alert-info" role="alert">
+              {{msg}}
+            </div>
+            {% endfor %}
+      {%endif%}
     <h2>Register</h2>
-        <form method="post" class="w-50">
+        <form method="post" class="w-50" enctype="multipart/form-data">
           {% csrf_token %}
   
           {{ form|crispy }}
