@@ -1,7 +1,8 @@
 body{
     background-image: url('./imgs/bk.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-repeat: repeat-y;
+    background-size: 100%;
+    background-color: rgba(255, 255, 240, 0.411);
 }
 .pro{
     background-color: rgba(255, 255, 255, 0.938);
@@ -53,3 +54,15 @@ body{
       background-color: rgba(0, 0, 0, 0.288);
       border-radius: 2%;
   }
+.text-center{
+    color:whitesmoke;
+    margin-top: 20px;
+}
+.searchbar{
+    background-color: whitesmoke;
+    border:rgb(52, 52, 54) solid 2px;
+    padding: 5px;
+}
+.show{
+    background-color: rgba(245, 245, 245, 0.616)
+}

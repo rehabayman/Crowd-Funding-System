@@ -1,11 +1,35 @@
-{% extends 'users/base.html' %}
-        
+{% extends 'projects/base.html' %}
+        {% load static%}
     {% block title %}
         {{user.first_name}}'s Donations
     {% endblock %}
 
-{% block my_content %}
-    <div class="container" style="margin-top: 5rem;">
+
+    {% block my_content %}
+<ul class="navbar" style="display: flex;">
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+        <li><img style="margin-left: 0;" class="logo" style="margin-left: 45rem;" src="{% static 'users/imgs/logo.png' %}">
+        </li>
+        <li class="navitem ml-2"><a href="{% url 'homepage_index' %}">Home</a></li>
+    {% if user.is_authenticated %}
+            <li class='navitem ml-2'><a  href="/projects/">All Projects</a></li>
+            <li class='navitem ml-2'><a  href="/projects/new">Create a project</a></li>
+    </div>
+    {% endif %}
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-right: 10px;">
+        {% if user.is_authenticated %}
+            <li class='navitem' ><a class="active" href="/users/donations">My Donations</a></li>
+            <li class='navitem' ><a href="/users/projects">My Projects</a></li>
+            <li class='navitem' ><a href="/users/show">My Profile</a></li>
+            <li class='navitem' ><a href="/users/logout/">Log out</a></li>
+        {% else %}
+            <li class='navitem'><a href="/users/login/">Login</a></li>
+            <li class='navitem'><a href="/users/register/">Register</a></li>
+        {% endif %}
+    </div>
+  </ul>
+    <div class="container show" style="margin-top: 5rem;">
         <div style="display: flex; flex-direction: row; justify-content: flex-start">
             <h2>My Donations</h2>
             <a href="/projects/" class="btn btn-primary ml-3" style="height: 2.4rem;">Donate More</a>
@@ -40,4 +64,5 @@
     
 
     </div>
+   
 {% endblock %}
