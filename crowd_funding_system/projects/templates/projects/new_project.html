@@ -34,7 +34,8 @@
         {% csrf_token %}
         {{form.as_p}}
         {{image_form.as_p}}
-        <input type='submit' value="save" class="btn btn-block btn-primary"/>
+        {{tags_form.as_p}}
+        <input type='submit' value="Save" class="btn btn-block btn-primary"/>
     </form>
 </div>
 </body>

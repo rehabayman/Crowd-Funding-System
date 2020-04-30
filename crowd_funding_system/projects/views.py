@@ -169,7 +169,8 @@ def new_project(request):
     if request.method == 'POST':
         form = new_project_form(request.POST)
         image_form = NewProjectPicturesForm(request.POST, request.FILES)
-        if form.is_valid() and image_form.is_valid():
+        tags_form = NewProjectTagsForm(request.POST)
+        if form.is_valid() and image_form.is_valid() and tags_form.is_valid():
             projform = form.save(commit=False)
             projform.creator = request.user
             projform.save()
@@ -178,13 +179,20 @@ def new_project(request):
                 photo = Project_Pictures(project=projform, picture=pic)
                 photo.save()
 
+            tags_list = tags_form.cleaned_data['tag'].split(',')
+            for tag in tags_list:
+                tag = Project_Tags(project=projform, tag=tag)
+                tag.save()
+
             return HttpResponseRedirect('/projects/')
     else:
         form = new_project_form()
         image_form = NewProjectPicturesForm()
+        tags_form = NewProjectTagsForm()
         context = {
             'form': form,
-            'image_form': image_form
+            'image_form': image_form,
+            'tags_form': tags_form
         }
 
         return render (request, "projects/new_project.html", context)

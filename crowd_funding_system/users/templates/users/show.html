@@ -24,8 +24,8 @@
     <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-right: 10px;">
         {% if user.is_authenticated %}
             <li class='navitem' ><a  href="/users/donations">My Donations</a></li>
-            <li class='navitem' ><a class="active" href="/users/projects">My Projects</a></li>
-            <li class='navitem' ><a href="/users/show">My Profile</a></li>
+            <li class='navitem' ><a href="/users/projects">My Projects</a></li>
+            <li class='navitem active' ><a href="/users/show">My Profile</a></li>
             <li class='navitem' ><a href="/users/logout/">Log out</a></li>
         {% else %}
             <li class='navitem'><a href="/users/login/">Login</a></li>
@@ -34,7 +34,7 @@
     </div>
   </ul>
   <div class="body">
-<div class="left-container show">
+<div class="left-container show ml-5" style="margin-top: 80px; height: 30rem; border-radius: 20px;">
     <div class="img-container">
         <img src="{% if user.profile_pic != '' %} {{user.profile_pic.url}} {% endif %}"
             alt="{{user.first_name}}'s Profile Pic">
@@ -43,7 +43,7 @@
 </div>
 <div class="main-container">
 
-    <div class="info-container show" style="height: 25rem;">
+    <div class="info-container show" style="height: 30rem;">
         <h4>Email: {{user.email}}</h4>
 
         <h4>Phone:
