@@ -75,6 +75,8 @@
                 <p class=""><strong>Tags:</strong>  
                     {% for project_tag in project.project_tags_set.all %}
                         {{ project_tag.tag }}
+                    {% empty %}
+                        No Tags Provided.
                     {% endfor %}
                 </p>
             {% if project.creator.id != user.id %}
