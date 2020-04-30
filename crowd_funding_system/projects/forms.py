@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 import decimal
+from functools import partial
 
 class AddProjectRatingForm(forms.ModelForm):   
     class Meta:
@@ -27,6 +28,8 @@ class comment_form(forms.ModelForm):
             'comment',
         ]
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 class new_project_form(forms.ModelForm):
     class Meta:
@@ -43,9 +46,16 @@ class new_project_form(forms.ModelForm):
             'title': forms.TextInput(attrs={'class':'form-control', 'style':'width:500px'}),
             'details': forms.TextInput(attrs={'class':'form-control'}),
             'total_target': forms.TextInput(attrs={'class':'form-control'}),
-            'start_date': forms.TextInput(attrs={'class':'form-control'}),
-            'end_date': forms.TextInput(attrs={'class':'form-control'}),
+            'start_date': DateInput(attrs={'class':'form-control'}),
+            'end_date': DateInput(attrs={'class':'form-control'}),
             }
+
+class NewProjectPicturesForm(forms.ModelForm):
+    picture = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    class Meta:
+        model=Project_Pictures
+        fields = ['picture',]
+        widgets = {'project': forms.HiddenInput()}
 
 class ReportForm(ModelForm):
     class Meta:
