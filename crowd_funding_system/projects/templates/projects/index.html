@@ -28,10 +28,10 @@
     </div>
   </ul>
 <div class='container mx-auto justify-content-between' style="background-color: rgb(2, 14, 51);">
-    <h1 class="text-center my-5">Projects List</h1>
-    <h3 style="color: whitesmoke;">Search by Title or Tag.</h3>
+    <h1 class="text-center mt-5 p-3" style="color: whitesmoke;">Projects List</h1>
+    <h3 style="color: whitesmoke; margin-left: 90px;">Search by Title or Tag</h3>
    <form method="get">
-<div class="searchbar" >
+<div class="searchbar" style="padding-left: 150px;">
     {{myFilter.form}}
     <label>Tag: </label><input type="text" name="tag">
     <button class="btn btn-primary" type="submit">Search</button>
@@ -72,6 +72,11 @@
                 <p class=""><strong>End Date:</strong>  {{ project.end_date }}</p>
                 <p class=""><strong>Category:</strong>{{ project.category.category_name }}</p>
                 <p class=""><strong>Avg. Rating:</strong>  {{ project.average_rating }}</p>
+                <p class=""><strong>Tags:</strong>  
+                    {% for project_tag in project.project_tags_set.all %}
+                        {{ project_tag.tag }}
+                    {% endfor %}
+                </p>
             {% if project.creator.id != user.id %}
                 <a  class='rp-btn btn btn-warning' data-form="./report/{{ project.id }}" >Report</a>
                 <div class='modal hide w-50 container' ></div>
