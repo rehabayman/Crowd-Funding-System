@@ -43,7 +43,7 @@ def register_user(request):
             email = user.email
             token = user.get_activation_token()
             
-            url_to_activate = "/users/activate/" + token + "/" + str(user.id)
+            url_to_activate = request.build_absolute_uri('/') + "users/activate/" + token + "/" + str(user.id)
             message = "Please activate your email with the next url "  + url_to_activate
             send_mail(
                 'Account activation mail',

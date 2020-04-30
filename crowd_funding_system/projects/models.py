@@ -52,6 +52,10 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
+    class Meta:
+        verbose_name = 'Project Category'
+        verbose_name_plural = 'Project Categories'
+
 class Project_Tags(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tag = models.CharField(max_length=20)
