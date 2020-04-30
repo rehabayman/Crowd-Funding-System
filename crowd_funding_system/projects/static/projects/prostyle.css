@@ -6,21 +6,50 @@ body{
 .pro{
     background-color: rgba(255, 255, 255, 0.938);
     border-radius: 5%;
-    border: rgba(55, 55, 248, 0.472) 2px solid;
+    border: rgba(23, 23, 221, 0.472) 2px solid;
     margin: auto;
-    margin-top: 0;
+    margin-top: 20px;
     height: 60rem;
-    width: 40rem;
+    width: 45rem;
 }
 
 .head_home{
     color: whitesmoke;
     width: 100%;
-    background-color: rgb(2, 2, 43);
+    background-color: rgb(15, 15, 105);
     margin-top: 50px;
 }
 
 .logo{
-    margin-left: 65rem;
+    margin-left: 47rem;
     display: inline;
 }
+.com form input {
+    margin-bottom: 10px;
+    display: block;
+    width: 100%;
+  
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+  
+    line-height: 1.4em;
+  }
+  #replypanel{
+      display: none;
+  }
+
+  .comment{
+      background-color: rgba(221, 217, 217, 0.719);
+      margin: 2rem;
+      margin-left: 4rem;
+  }
+  .rep{
+      margin-top: 1rem;
+      background-color: rgba(0, 0, 0, 0.288);
+      border-radius: 2%;
+  }

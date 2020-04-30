@@ -5,20 +5,20 @@ body{
 }
 .logdiv{
     background-color: rgba(255, 255, 255, 0.938);
-    margin-left: 5rem;
+    margin-left: 3rem;
     width: 27rem;
     height: 30rem;
     border-radius: 5%;
     border: rgba(55, 55, 248, 0.472) 2px solid;
 }
 .regdiv{
-    height: 60rem;
-    width: 40rem;
+    height: 80rem;
+    width: 50rem;
     margin-left: 2rem;
     margin-top: 0;
 }
 .logo{
-    margin-left: 30rem;
+    margin-left: 4.5rem;
     display: inline;
 }
 .reg{
